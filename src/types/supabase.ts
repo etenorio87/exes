@@ -68,6 +68,7 @@ export type Database = {
           color: string | null;
           created_at: string;
           deleted_at: string | null;
+          i18n_key: string | null;
           icon: string | null;
           id: string;
           is_predefined: boolean;
@@ -80,6 +81,7 @@ export type Database = {
           color?: string | null;
           created_at?: string;
           deleted_at?: string | null;
+          i18n_key?: string | null;
           icon?: string | null;
           id?: string;
           is_predefined?: boolean;
@@ -92,6 +94,7 @@ export type Database = {
           color?: string | null;
           created_at?: string;
           deleted_at?: string | null;
+          i18n_key?: string | null;
           icon?: string | null;
           id?: string;
           is_predefined?: boolean;

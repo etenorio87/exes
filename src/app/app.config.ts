@@ -5,6 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
@@ -38,6 +39,8 @@ export const appConfig: ApplicationConfig = {
       fallbackLang: DEFAULT_LANG,
       lang: resolveInitialLang(),
     }),
+    MessageService,
+    ConfirmationService,
   ],
 };
 

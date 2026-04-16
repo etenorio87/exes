@@ -3,8 +3,10 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DrawerModule } from 'primeng/drawer';
 import { MenuModule } from 'primeng/menu';
+import { ToastModule } from 'primeng/toast';
 import { AuthService } from '../../core/auth.service';
 import { LanguageService, SupportedLang } from '../../core/language.service';
 
@@ -28,8 +30,10 @@ const NAV_ITEMS: readonly NavItem[] = [
     RouterLinkActive,
     TranslateModule,
     AvatarModule,
+    ConfirmDialogModule,
     DrawerModule,
     MenuModule,
+    ToastModule,
   ],
   templateUrl: './app-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

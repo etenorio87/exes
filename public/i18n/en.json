@@ -10,7 +10,54 @@
     "delete": "Delete",
     "edit": "Edit",
     "confirm": "Confirm",
-    "close": "Close"
+    "close": "Close",
+    "all": "All"
+  },
+  "categories": {
+    "title": "Categories",
+    "new": "New category",
+    "editDialogTitle": "Edit category",
+    "newDialogTitle": "New category",
+    "empty": "You don't have any custom categories yet. Click \"New category\" to create your first one.",
+    "predefinedTooltip": "Predefined category (read-only)",
+    "deleteConfirm": "Delete category \"{{name}}\"? This can be reverted if it hasn't been used.",
+    "deletedToast": "Category deleted.",
+    "savedToast": "Category saved.",
+    "fields": {
+      "name": "Name",
+      "type": "Type",
+      "color": "Color",
+      "icon": "Icon"
+    },
+    "filter": {
+      "label": "Filter by type"
+    },
+    "types": {
+      "income": "Income",
+      "expense": "Expense",
+      "both": "Both"
+    },
+    "errors": {
+      "nameRequired": "Name is required.",
+      "typeRequired": "Type is required.",
+      "duplicateName": "You already have a category with that name.",
+      "cannotDeleteInUse": "Cannot delete: this category has linked transactions.",
+      "generic": "Could not save the category."
+    },
+    "predefined": {
+      "food": "Food",
+      "transport": "Transport",
+      "leisure": "Leisure",
+      "health": "Health",
+      "education": "Education",
+      "housing": "Housing",
+      "services": "Services",
+      "clothing": "Clothing",
+      "savings": "Savings",
+      "income": "Income",
+      "salary": "Salary",
+      "other_income": "Other income"
+    }
   },
   "auth": {
     "login": {

@@ -10,7 +10,54 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "confirm": "Confirmar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "all": "Todas"
+  },
+  "categories": {
+    "title": "Categorías",
+    "new": "Nueva categoría",
+    "editDialogTitle": "Editar categoría",
+    "newDialogTitle": "Nueva categoría",
+    "empty": "Aún no tienes categorías propias. Pulsa \"Nueva categoría\" para crear la primera.",
+    "predefinedTooltip": "Categoría predefinida (no editable)",
+    "deleteConfirm": "¿Eliminar la categoría \"{{name}}\"? Esta acción se puede deshacer si no la has utilizado.",
+    "deletedToast": "Categoría eliminada.",
+    "savedToast": "Categoría guardada.",
+    "fields": {
+      "name": "Nombre",
+      "type": "Tipo",
+      "color": "Color",
+      "icon": "Icono"
+    },
+    "filter": {
+      "label": "Filtrar por tipo"
+    },
+    "types": {
+      "income": "Ingreso",
+      "expense": "Gasto",
+      "both": "Ambos"
+    },
+    "errors": {
+      "nameRequired": "El nombre es obligatorio.",
+      "typeRequired": "El tipo es obligatorio.",
+      "duplicateName": "Ya tienes una categoría con ese nombre.",
+      "cannotDeleteInUse": "No se puede eliminar: esta categoría tiene transacciones asociadas.",
+      "generic": "No se pudo guardar la categoría."
+    },
+    "predefined": {
+      "food": "Alimentación",
+      "transport": "Transporte",
+      "leisure": "Ocio",
+      "health": "Salud",
+      "education": "Educación",
+      "housing": "Vivienda",
+      "services": "Servicios",
+      "clothing": "Ropa",
+      "savings": "Ahorros",
+      "income": "Ingresos",
+      "salary": "Salario",
+      "other_income": "Otros ingresos"
+    }
   },
   "auth": {
     "login": {
