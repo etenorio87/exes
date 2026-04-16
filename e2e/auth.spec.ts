@@ -31,7 +31,7 @@ test.describe('auth flow', () => {
 
     // Sign out via user menu
     await page.locator('[data-testid=user-menu-trigger]').click();
-    await page.locator('[aria-label="Cerrar sesión"] .p-menu-item-link').click();
+    await page.locator('.p-menu-item-link').filter({ hasText: 'Cerrar sesión' }).click();
     await expect(page).toHaveURL(/\/auth\/login$/);
 
     // Sign in again with the same credentials

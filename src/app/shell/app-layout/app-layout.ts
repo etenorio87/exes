@@ -58,17 +58,24 @@ export class AppLayout {
     // PrimeNG misrenders items that appear after a section with `items: [...]`
     // — top-level items with a command get demoted to plain text. Keeping the
     // language entries as nested items inside one group avoids the issue.
+    const flag = (code: SupportedLang): string =>
+      `<img src="/flags/${code}.svg" alt="" ` +
+      `class="inline-block h-3 w-auto mr-2 align-middle rounded-sm ` +
+      `border border-surface-300 dark:border-surface-700" />`;
+
     return [
       {
         label: this.user()?.email ?? '',
         items: [
           {
-            label: 'Español',
+            label: `${flag('es')}Español`,
+            escape: false,
             icon: cur === 'es' ? 'pi pi-check' : 'pi pi-blank',
             command: () => void this.lang.setLanguage('es'),
           },
           {
-            label: 'English',
+            label: `${flag('en')}English`,
+            escape: false,
             icon: cur === 'en' ? 'pi pi-check' : 'pi pi-blank',
             command: () => void this.lang.setLanguage('en'),
           },

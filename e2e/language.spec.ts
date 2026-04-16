@@ -33,7 +33,7 @@ test.describe('language switcher', () => {
     const profileUpdate = page.waitForResponse(
       (resp) => resp.url().includes('/rest/v1/profiles') && resp.request().method() === 'PATCH',
     );
-    await page.locator('[aria-label="English"] .p-menu-item-link').click();
+    await page.locator('.p-menu-item-link').filter({ hasText: 'English' }).click();
     await profileUpdate;
 
     // Sidebar updates without reloading
