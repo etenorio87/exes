@@ -1,5 +1,14 @@
-/* CSS layer order: Tailwind utilities should win over PrimeNG component styles */
-@layer tailwind-base, primeng, tailwind-utilities;
+/*
+ * CSS layer order for PrimeNG + Tailwind v4:
+ *   theme       → Tailwind design tokens (CSS vars)
+ *   base        → Tailwind preflight / resets
+ *   primeng     → PrimeNG component styles (override the reset)
+ *   components  → reserved for our own @layer components rules
+ *   utilities   → Tailwind utilities (override PrimeNG when used)
+ *
+ * `primeng` is registered as the target layer in providePrimeNG cssLayer.name.
+ */
+@layer theme, base, primeng, components, utilities;
 
 @import 'tailwindcss';
 @plugin 'tailwindcss-primeui';

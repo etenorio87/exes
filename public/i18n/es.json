@@ -11,5 +11,50 @@
     "edit": "Editar",
     "confirm": "Confirmar",
     "close": "Cerrar"
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "submit": "Entrar",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "noAccount": "Crear cuenta"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "submit": "Registrarme",
+      "haveAccount": "Ya tengo cuenta"
+    },
+    "recover": {
+      "title": "Recuperar contraseña",
+      "description": "Te enviaremos un enlace para restablecer tu contraseña.",
+      "submit": "Enviar enlace",
+      "success": "Si el email existe, recibirás un enlace en unos minutos.",
+      "backToLogin": "Volver a iniciar sesión"
+    },
+    "reset": {
+      "title": "Nueva contraseña",
+      "submit": "Cambiar contraseña",
+      "success": "Contraseña actualizada. Redirigiendo..."
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "passwordPrompt": "Introduce una contraseña",
+      "passwordWeak": "Débil",
+      "passwordMedium": "Media",
+      "passwordStrong": "Fuerte"
+    },
+    "errors": {
+      "generic": "Ha ocurrido un error. Inténtalo de nuevo.",
+      "passwordsDontMatch": "Las contraseñas no coinciden."
+    }
+  },
+  "shell": {
+    "home": {
+      "title": "Bienvenido",
+      "signedInAs": "Sesión iniciada como",
+      "signOut": "Cerrar sesión"
+    }
   }
 }

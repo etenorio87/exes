@@ -1,0 +1,51 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+  <h2 class="text-xl font-semibold">{{ 'auth.reset.title' | translate }}</h2>
+
+  @if (success()) {
+    <p-message severity="success" [text]="'auth.reset.success' | translate" />
+  } @else {
+    <div class="flex flex-col gap-1">
+      <label for="reset-password">{{ 'auth.fields.password' | translate }}</label>
+      <p-password
+        inputId="reset-password"
+        formControlName="password"
+        [feedback]="true"
+        [toggleMask]="true"
+        autocomplete="new-password"
+        styleClass="w-full"
+        [inputStyle]="{ width: '100%' }"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="reset-confirm">{{ 'auth.fields.confirmPassword' | translate }}</label>
+      <p-password
+        inputId="reset-confirm"
+        formControlName="confirmPassword"
+        [feedback]="false"
+        [toggleMask]="true"
+        autocomplete="new-password"
+        styleClass="w-full"
+        [inputStyle]="{ width: '100%' }"
+      />
+      @if (
+        form.errors?.['passwordMismatch'] &&
+        (form.controls.confirmPassword.touched || form.controls.confirmPassword.dirty)
+      ) {
+        <small class="text-red-600">{{ 'auth.errors.passwordsDontMatch' | translate }}</small>
+      }
+    </div>
+
+    @if (error(); as msg) {
+      <p-message severity="error" [text]="msg" />
+    }
+
+    <p-button
+      type="submit"
+      [label]="'auth.reset.submit' | translate"
+      [loading]="submitting()"
+      [disabled]="form.invalid"
+      styleClass="w-full"
+    />
+  }
+</form>

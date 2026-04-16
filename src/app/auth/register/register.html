@@ -1,0 +1,68 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+  <h2 class="text-xl font-semibold">{{ 'auth.register.title' | translate }}</h2>
+
+  <div class="flex flex-col gap-1">
+    <label for="register-email">{{ 'auth.fields.email' | translate }}</label>
+    <input
+      pInputText
+      id="register-email"
+      type="email"
+      formControlName="email"
+      autocomplete="email"
+    />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="register-password">{{ 'auth.fields.password' | translate }}</label>
+    <p-password
+      inputId="register-password"
+      formControlName="password"
+      [feedback]="true"
+      [toggleMask]="true"
+      autocomplete="new-password"
+      styleClass="w-full"
+      [inputStyle]="{ width: '100%' }"
+      [promptLabel]="'auth.fields.passwordPrompt' | translate"
+      [weakLabel]="'auth.fields.passwordWeak' | translate"
+      [mediumLabel]="'auth.fields.passwordMedium' | translate"
+      [strongLabel]="'auth.fields.passwordStrong' | translate"
+    />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label for="register-confirm">{{ 'auth.fields.confirmPassword' | translate }}</label>
+    <p-password
+      inputId="register-confirm"
+      formControlName="confirmPassword"
+      [feedback]="false"
+      [toggleMask]="true"
+      autocomplete="new-password"
+      styleClass="w-full"
+      [inputStyle]="{ width: '100%' }"
+    />
+    @if (
+      form.errors?.['passwordMismatch'] &&
+      (form.controls.confirmPassword.touched || form.controls.confirmPassword.dirty)
+    ) {
+      <small class="text-red-600">{{ 'auth.errors.passwordsDontMatch' | translate }}</small>
+    }
+  </div>
+
+  @if (error(); as msg) {
+    <p-message severity="error" [text]="msg" />
+  }
+
+  <p-button
+    type="submit"
+    [label]="'auth.register.submit' | translate"
+    [loading]="submitting()"
+    [disabled]="form.invalid"
+    styleClass="w-full"
+  />
+
+  <div class="text-sm pt-2 text-center">
+    <a [routerLink]="['/auth/login']" class="text-primary-600 hover:underline">
+      {{ 'auth.register.haveAccount' | translate }}
+    </a>
+  </div>
+</form>
