@@ -59,24 +59,24 @@ export class AppLayout {
     // — top-level items with a command get demoted to plain text. Keeping the
     // language entries as nested items inside one group avoids the issue.
     const flag = (code: SupportedLang): string =>
-      `<img src="/flags/${code}.svg" alt="" ` +
-      `class="inline-block h-3 w-auto mr-2 align-middle rounded-sm ` +
-      `border border-surface-300 dark:border-surface-700" />`;
+      `<img src="/flags/${code}.svg" alt="" class="inline-block h-4 w-auto mr-2 align-middle" />`;
+    const langItem = (code: SupportedLang, name: string): string => {
+      const cls = cur === code ? 'font-semibold text-primary-600' : '';
+      return `<span class="${cls}">${flag(code)}${name}</span>`;
+    };
 
     return [
       {
         label: this.user()?.email ?? '',
         items: [
           {
-            label: `${flag('es')}Español`,
+            label: langItem('es', 'Español'),
             escape: false,
-            icon: cur === 'es' ? 'pi pi-check' : 'pi pi-blank',
             command: () => void this.lang.setLanguage('es'),
           },
           {
-            label: `${flag('en')}English`,
+            label: langItem('en', 'English'),
             escape: false,
-            icon: cur === 'en' ? 'pi pi-check' : 'pi pi-blank',
             command: () => void this.lang.setLanguage('en'),
           },
           { separator: true },
