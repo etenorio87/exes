@@ -110,5 +110,53 @@
       "language": "Language",
       "signOut": "Sign out"
     }
+  },
+  "transactions": {
+    "title": "Transactions",
+    "new": "New transaction",
+    "newDialogTitle": "New transaction",
+    "editDialogTitle": "Edit transaction",
+    "empty": "No transactions match the current filters.",
+    "emptyTrash": "Trash is empty.",
+    "savedToast": "Transaction saved.",
+    "deletedToast": "Transaction deleted.",
+    "restoredToast": "Transaction restored.",
+    "deleteConfirm": "Delete this transaction?",
+    "showDeleted": "Show deleted",
+    "restore": "Restore",
+    "fields": {
+      "type": "Type",
+      "amount": "Amount",
+      "category": "Category",
+      "date": "Date",
+      "description": "Description",
+      "paymentMethod": "Payment method",
+      "descriptionPlaceholder": "Optional"
+    },
+    "filters": {
+      "from": "From",
+      "to": "To",
+      "type": "Type",
+      "categories": "Categories"
+    },
+    "paymentMethods": {
+      "cash": "Cash",
+      "card": "Card",
+      "transfer": "Transfer"
+    },
+    "table": {
+      "date": "Date",
+      "description": "Description",
+      "category": "Category",
+      "amount": "Amount",
+      "paymentMethod": "Method",
+      "actions": "Actions"
+    },
+    "errors": {
+      "amountInvalid": "Enter an amount greater than 0.",
+      "categoryRequired": "Pick a category.",
+      "dateRequired": "Date is required.",
+      "generic": "Could not save the transaction."
+    }
   }
 }
