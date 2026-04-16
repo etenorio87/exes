@@ -1,15 +1,22 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
+
+const SUPPORTED_LANGS = ['es', 'en'] as const;
+const DEFAULT_LANG = 'es';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
+    provideHttpClient(withFetch()),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
@@ -18,10 +25,43 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: '.app-dark',
           cssLayer: {
             name: 'primeng',
-            order: 'tailwind-base, primeng, tailwind-utilities'
-          }
-        }
-      }
-    })
-  ]
+            order: 'tailwind-base, primeng, tailwind-utilities',
+          },
+        },
+      },
+    }),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        prefix: '/i18n/',
+        suffix: '.json',
+      }),
+      fallbackLang: DEFAULT_LANG,
+      lang: resolveInitialLang(),
+    }),
+  ],
 };
+
+/**
+ * Pick the initial UI language:
+ *   1. value previously stored in localStorage (user choice)
+ *   2. browser language if supported
+ *   3. DEFAULT_LANG (es)
+ *
+ * When the user logs in, `LanguageService` (Fase 1) overrides this with the
+ * value persisted in `profiles.language`.
+ */
+function resolveInitialLang(): string {
+  if (typeof localStorage !== 'undefined') {
+    const stored = localStorage.getItem('lang');
+    if (stored && (SUPPORTED_LANGS as readonly string[]).includes(stored)) {
+      return stored;
+    }
+  }
+  if (typeof navigator !== 'undefined') {
+    const browser = navigator.language.split('-')[0];
+    if ((SUPPORTED_LANGS as readonly string[]).includes(browser)) {
+      return browser;
+    }
+  }
+  return DEFAULT_LANG;
+}

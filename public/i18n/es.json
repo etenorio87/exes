@@ -1,0 +1,15 @@
+{
+  "app": {
+    "title": "EXES",
+    "tagline": "Gestión de finanzas personales",
+    "loading": "Cargando..."
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "confirm": "Confirmar",
+    "close": "Cerrar"
+  }
+}

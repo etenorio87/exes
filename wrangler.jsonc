@@ -1,0 +1,21 @@
+/**
+ * Cloudflare Workers config — serves the built Angular SPA as static assets.
+ *
+ * `not_found_handling: "single-page-application"` makes Cloudflare serve
+ * `index.html` for any path that doesn't match a real file. That's how the
+ * Angular HTML5 router works without the 404.html trick.
+ *
+ * Schema reference: https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "exes",
+  "compatibility_date": "2026-04-01",
+  "assets": {
+    "directory": "./dist/exes-monorepo/browser",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "app": {
+    "title": "EXES",
+    "tagline": "Personal finance management",
+    "loading": "Loading..."
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "close": "Close"
+  }
+}
