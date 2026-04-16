@@ -1,59 +1,96 @@
-# ExesMonorepo
+# EXES
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+Aplicación web para gestión de finanzas personales.
 
-## Development server
+## Stack
 
-To start a local development server, run:
+- **Frontend** — Angular 21 (standalone components, signals, control flow `@if`/`@for`)
+- **UI** — PrimeNG 21 (tema Aura) + TailwindCSS 4 con preset oficial `tailwindcss-primeui`
+- **Gráficos** — Chart.js
+- **Backend** — Supabase (Auth + PostgreSQL + RLS)
+- **i18n** — ngx-translate (ES + EN)
+- **Hosting** — Cloudflare Pages
+- **CI/CD** — GitHub Actions
 
-```bash
-ng serve
+## Estructura
+
+```text
+exes-monorepo/
+├── src/
+│   ├── app/
+│   │   ├── core/             # SupabaseService y servicios transversales
+│   │   └── ...
+│   └── environments/         # SUPABASE_URL + anon key (públicas, protege RLS)
+├── supabase/
+│   ├── config.toml           # Configuración del CLI
+│   └── migrations/           # Esquema versionado
+├── angular.json
+├── .postcssrc.json           # PostCSS para Tailwind v4
+└── package.json
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Modelo de datos
 
-## Code scaffolding
+| Tabla                   | Propósito                                                                    |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| `profiles`              | Preferencias de usuario (moneda, formato de fecha, idioma, tema)             |
+| `accounts`              | Cuentas/wallets (cuenta `Principal` creada por trigger al registrarse)       |
+| `categories`            | Categorías globales (predefinidas, inmutables) y propias del usuario         |
+| `recurrences`           | Plantillas de transacciones recurrentes                                      |
+| `recurrence_exceptions` | Excepciones a la serie (estilo Google Calendar)                              |
+| `transactions`          | Movimientos puntuales y modificaciones de ocurrencias                        |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Las recurrencias **no se materializan** en BD: la función `get_transactions(start, end)` expande las ocurrencias virtualmente al consultar y aplica las excepciones.
 
-```bash
-ng generate component component-name
-```
+## Prerequisitos
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- Node 20+ (probado con 24.x)
+- npm 10+
+- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started): `brew install supabase/tap/supabase`
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Desarrollo local
 
 ```bash
-ng test
+npm install
+npm start
+# → http://localhost:4200
 ```
 
-## Running end-to-end tests
+## Base de datos
 
-For end-to-end (e2e) testing, run:
+Las migraciones viven en `supabase/migrations/`. Para aplicarlas a un proyecto remoto:
 
 ```bash
-ng e2e
+supabase login
+supabase link --project-ref <PROJECT_REF>
+supabase db push
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Crear una nueva migración:
 
-## Additional Resources
+```bash
+supabase migration new <nombre_descriptivo>
+```
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Build
+
+```bash
+npm run build
+# Salida: dist/exes-monorepo/browser
+```
+
+## Roadmap
+
+Desarrollo organizado por fases:
+
+- **Fase 0 — Infraestructura** ✅
+  Esquema de BD + RLS + función de expansión de recurrencias. Setup de Angular, PrimeNG, Tailwind, Supabase y CI/CD.
+
+- **Fase 1 — MVP usable**
+  Autenticación (login/registro/recuperación). CRUD de transacciones puntuales con filtros básicos y paginación. Dashboard mínimo (balance del mes, gastos por categoría). Responsive móvil.
+
+- **Fase 2 — Productividad**
+  Transacciones recurrentes con patrón Google Calendar para edición. Reportes (mes vs anterior, evolución temporal, top categorías). Búsqueda, preferencias de usuario, modo oscuro.
+
+- **Fase 3 — Power user**
+  Cuentas/wallets con UI y saldo acumulado. Presupuestos por categoría. Import/export CSV. PWA. Backup y borrado de cuenta.
