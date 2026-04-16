@@ -31,14 +31,14 @@ exes-monorepo/
 
 ## Modelo de datos
 
-| Tabla                   | Propósito                                                                    |
-| ----------------------- | ---------------------------------------------------------------------------- |
-| `profiles`              | Preferencias de usuario (moneda, formato de fecha, idioma, tema)             |
-| `accounts`              | Cuentas/wallets (cuenta `Principal` creada por trigger al registrarse)       |
-| `categories`            | Categorías globales (predefinidas, inmutables) y propias del usuario         |
-| `recurrences`           | Plantillas de transacciones recurrentes                                      |
-| `recurrence_exceptions` | Excepciones a la serie (estilo Google Calendar)                              |
-| `transactions`          | Movimientos puntuales y modificaciones de ocurrencias                        |
+| Tabla                   | Propósito                                                              |
+| ----------------------- | ---------------------------------------------------------------------- |
+| `profiles`              | Preferencias de usuario (moneda, formato de fecha, idioma, tema)       |
+| `accounts`              | Cuentas/wallets (cuenta `Principal` creada por trigger al registrarse) |
+| `categories`            | Categorías globales (predefinidas, inmutables) y propias del usuario   |
+| `recurrences`           | Plantillas de transacciones recurrentes                                |
+| `recurrence_exceptions` | Excepciones a la serie (estilo Google Calendar)                        |
+| `transactions`          | Movimientos puntuales y modificaciones de ocurrencias                  |
 
 Las recurrencias **no se materializan** en BD: la función `get_transactions(start, end)` expande las ocurrencias virtualmente al consultar y aplica las excepciones.
 

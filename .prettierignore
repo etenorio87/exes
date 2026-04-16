@@ -1,0 +1,24 @@
+# Build artifacts
+dist/
+.angular/
+coverage/
+
+# Dependencies
+node_modules/
+
+# Generated
+public/i18n/
+
+# Logs
+*.log
+
+# Wrangler
+.wrangler/
+
+# Supabase local state
+supabase/.temp/
+supabase/.branches/
+
+# Test results
+playwright-report/
+test-results/
