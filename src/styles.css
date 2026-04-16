@@ -1,1 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
+/* CSS layer order: Tailwind utilities should win over PrimeNG component styles */
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@import 'tailwindcss';
+@plugin 'tailwindcss-primeui';
+
+@import 'primeicons/primeicons.css';
+
+/* Dark mode is toggled by adding the class `app-dark` on <html> (see app.config.ts) */
+@custom-variant dark (&:where(.app-dark, .app-dark *));
