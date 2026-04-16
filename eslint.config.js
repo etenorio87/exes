@@ -7,6 +7,10 @@ const prettier = require('eslint-config-prettier/flat');
 
 module.exports = defineConfig([
   {
+    // Generated files (Supabase types regenerated via CLI). Don't lint.
+    ignores: ['src/types/supabase.ts'],
+  },
+  {
     files: ['**/*.ts'],
     extends: [
       eslint.configs.recommended,

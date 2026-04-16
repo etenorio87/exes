@@ -11,5 +11,50 @@
     "edit": "Edit",
     "confirm": "Confirm",
     "close": "Close"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "submit": "Sign in",
+      "forgot": "Forgot your password?",
+      "noAccount": "Create account"
+    },
+    "register": {
+      "title": "Create account",
+      "submit": "Sign up",
+      "haveAccount": "I already have an account"
+    },
+    "recover": {
+      "title": "Recover password",
+      "description": "We'll send you a link to reset your password.",
+      "submit": "Send link",
+      "success": "If the email exists, you'll receive a link in a few minutes.",
+      "backToLogin": "Back to sign in"
+    },
+    "reset": {
+      "title": "New password",
+      "submit": "Change password",
+      "success": "Password updated. Redirecting..."
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "passwordPrompt": "Enter a password",
+      "passwordWeak": "Weak",
+      "passwordMedium": "Medium",
+      "passwordStrong": "Strong"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "passwordsDontMatch": "Passwords do not match."
+    }
+  },
+  "shell": {
+    "home": {
+      "title": "Welcome",
+      "signedInAs": "Signed in as",
+      "signOut": "Sign out"
+    }
   }
 }

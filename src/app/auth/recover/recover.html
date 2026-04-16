@@ -1,0 +1,39 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+  <h2 class="text-xl font-semibold">{{ 'auth.recover.title' | translate }}</h2>
+  <p class="text-sm text-surface-600 dark:text-surface-400">
+    {{ 'auth.recover.description' | translate }}
+  </p>
+
+  @if (success()) {
+    <p-message severity="success" [text]="'auth.recover.success' | translate" />
+  } @else {
+    <div class="flex flex-col gap-1">
+      <label for="recover-email">{{ 'auth.fields.email' | translate }}</label>
+      <input
+        pInputText
+        id="recover-email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+      />
+    </div>
+
+    @if (error(); as msg) {
+      <p-message severity="error" [text]="msg" />
+    }
+
+    <p-button
+      type="submit"
+      [label]="'auth.recover.submit' | translate"
+      [loading]="submitting()"
+      [disabled]="form.invalid"
+      styleClass="w-full"
+    />
+  }
+
+  <div class="text-sm pt-2 text-center">
+    <a [routerLink]="['/auth/login']" class="text-primary-600 hover:underline">
+      {{ 'auth.recover.backToLogin' | translate }}
+    </a>
+  </div>
+</form>
