@@ -11,6 +11,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./shell/shell.routes').then((m) => m.shellRoutes),
   },
-  { path: '', redirectTo: '/app/home', pathMatch: 'full' },
-  { path: '**', redirectTo: '/app/home' },
+  { path: '', redirectTo: '/app/dashboard', pathMatch: 'full' },
+  { path: '**', redirectTo: '/app/dashboard' },
 ];

@@ -51,9 +51,16 @@
     }
   },
   "shell": {
-    "home": {
-      "title": "Welcome",
-      "signedInAs": "Signed in as",
+    "openMenu": "Open menu",
+    "placeholder": "Coming soon.",
+    "nav": {
+      "dashboard": "Dashboard",
+      "transactions": "Transactions",
+      "categories": "Categories"
+    },
+    "userMenu": {
+      "label": "User menu",
+      "language": "Language",
       "signOut": "Sign out"
     }
   }

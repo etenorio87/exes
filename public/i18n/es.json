@@ -51,9 +51,16 @@
     }
   },
   "shell": {
-    "home": {
-      "title": "Bienvenido",
-      "signedInAs": "Sesión iniciada como",
+    "openMenu": "Abrir menú",
+    "placeholder": "Próximamente.",
+    "nav": {
+      "dashboard": "Panel",
+      "transactions": "Transacciones",
+      "categories": "Categorías"
+    },
+    "userMenu": {
+      "label": "Menú de usuario",
+      "language": "Idioma",
       "signOut": "Cerrar sesión"
     }
   }
