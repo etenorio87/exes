@@ -379,23 +379,22 @@ export class Transactions {
         } else if (scope === 'future') {
           await this.recurrences.editThisAndFuture(
             editing.recurrence_id,
-            editing.transaction_date,
+            editing.transaction_date, // cut original at the ORIGINAL date
             {
               ...recurrenceFields,
               frequency: this.frequency(),
-              start_date: editing.transaction_date,
+              start_date: txDate, // new series starts at the form's date
               end_date:
-                dateOnly(this.endDate()) ??
-                this.recurrences.defaultEndDate(editing.transaction_date),
+                dateOnly(this.endDate()) ?? this.recurrences.defaultEndDate(txDate),
             },
           );
         } else {
           await this.recurrences.editAll(editing.recurrence_id, {
             ...recurrenceFields,
             frequency: this.frequency(),
-            start_date: editing.transaction_date,
+            start_date: txDate, // use the form's date
             end_date:
-              dateOnly(this.endDate()) ?? this.recurrences.defaultEndDate(editing.transaction_date),
+              dateOnly(this.endDate()) ?? this.recurrences.defaultEndDate(txDate),
           });
         }
       } else {
