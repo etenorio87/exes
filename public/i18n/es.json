@@ -110,5 +110,53 @@
       "language": "Idioma",
       "signOut": "Cerrar sesión"
     }
+  },
+  "transactions": {
+    "title": "Transacciones",
+    "new": "Nueva transacción",
+    "newDialogTitle": "Nueva transacción",
+    "editDialogTitle": "Editar transacción",
+    "empty": "No hay transacciones que coincidan con los filtros.",
+    "emptyTrash": "La papelera está vacía.",
+    "savedToast": "Transacción guardada.",
+    "deletedToast": "Transacción eliminada.",
+    "restoredToast": "Transacción restaurada.",
+    "deleteConfirm": "¿Eliminar esta transacción?",
+    "showDeleted": "Ver eliminadas",
+    "restore": "Restaurar",
+    "fields": {
+      "type": "Tipo",
+      "amount": "Cantidad",
+      "category": "Categoría",
+      "date": "Fecha",
+      "description": "Descripción",
+      "paymentMethod": "Método de pago",
+      "descriptionPlaceholder": "Opcional"
+    },
+    "filters": {
+      "from": "Desde",
+      "to": "Hasta",
+      "type": "Tipo",
+      "categories": "Categorías"
+    },
+    "paymentMethods": {
+      "cash": "Efectivo",
+      "card": "Tarjeta",
+      "transfer": "Transferencia"
+    },
+    "table": {
+      "date": "Fecha",
+      "description": "Descripción",
+      "category": "Categoría",
+      "amount": "Cantidad",
+      "paymentMethod": "Método",
+      "actions": "Acciones"
+    },
+    "errors": {
+      "amountInvalid": "Introduce una cantidad mayor que 0.",
+      "categoryRequired": "Selecciona una categoría.",
+      "dateRequired": "La fecha es obligatoria.",
+      "generic": "No se pudo guardar la transacción."
+    }
   }
 }
