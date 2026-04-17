@@ -1,7 +1,39 @@
 <div class="space-y-6">
-  <h1 class="text-2xl font-bold text-surface-900 dark:text-surface-50">
-    {{ 'dashboard.title' | translate }}
-  </h1>
+  <!-- Header with month navigator -->
+  <div class="flex items-center justify-between gap-4 flex-wrap">
+    <h1 class="text-2xl font-bold text-surface-900 dark:text-surface-50">
+      {{ 'dashboard.title' | translate }}
+    </h1>
+    <div class="flex items-center gap-1">
+      <p-button
+        icon="pi pi-chevron-left"
+        [text]="true"
+        severity="secondary"
+        [ariaLabel]="'dashboard.prevMonth' | translate"
+        (onClick)="prevMonth()"
+        data-testid="month-prev"
+      />
+      <p-datepicker
+        [ngModel]="selectedMonth()"
+        (ngModelChange)="onMonthSelect($event)"
+        view="month"
+        dateFormat="MM yy"
+        appendTo="body"
+        [showIcon]="false"
+        [inputStyle]="{ width: '10rem', textAlign: 'center', cursor: 'pointer', fontWeight: '600' }"
+        [readonlyInput]="true"
+        data-testid="month-picker"
+      />
+      <p-button
+        icon="pi pi-chevron-right"
+        [text]="true"
+        severity="secondary"
+        [ariaLabel]="'dashboard.nextMonth' | translate"
+        (onClick)="nextMonth()"
+        data-testid="month-next"
+      />
+    </div>
+  </div>
 
   <!-- Summary cards -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">

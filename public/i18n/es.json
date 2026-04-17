@@ -120,7 +120,9 @@
     "recentTransactions": "Últimas transacciones",
     "noExpenses": "Sin gastos este mes.",
     "noTransactions": "Sin transacciones este mes.",
-    "amount": "Cantidad"
+    "amount": "Cantidad",
+    "prevMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente"
   },
   "transactions": {
     "title": "Transacciones",
