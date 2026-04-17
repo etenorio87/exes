@@ -141,8 +141,56 @@
     }
   </div>
 
-  <!-- Doughnut + Recent (side by side) -->
+  <!-- Top 5 + Doughnut -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Top 5 categories with proportional bars -->
+    <div
+      class="bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg p-5"
+    >
+      <h2 class="text-lg font-semibold text-surface-900 dark:text-surface-50 mb-4">
+        {{ 'dashboard.topCategories' | translate }}
+      </h2>
+      @if (data().expensesByCategory.length === 0) {
+        <p class="text-surface-500 dark:text-surface-400 py-8 text-center">
+          {{ 'dashboard.noTopCategories' | translate }}
+        </p>
+      } @else {
+        <ul class="flex flex-col gap-3">
+          @for (entry of data().expensesByCategory.slice(0, 5); track entry.categoryId) {
+            <li class="flex items-center gap-3">
+              <span
+                class="flex items-center justify-center w-8 h-8 rounded-full shrink-0"
+                [style.background-color]="categoryColor(entry.categoryId) + '22'"
+                [style.color]="categoryColor(entry.categoryId)"
+              >
+                <i [class]="'pi ' + categoryIcon(entry.categoryId) + ' text-xs'"></i>
+              </span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium text-surface-900 dark:text-surface-50 truncate">
+                    {{ categoryName(entry.categoryId) }}
+                  </span>
+                  <span class="text-sm font-semibold text-red-600 whitespace-nowrap ml-2">
+                    {{ formatCurrency(entry.total) }}
+                  </span>
+                </div>
+                <div
+                  class="w-full h-2 bg-surface-100 dark:bg-surface-800 rounded-full overflow-hidden"
+                >
+                  <div
+                    class="h-full rounded-full transition-all"
+                    [style.width.%]="(entry.total / data().expensesByCategory[0].total) * 100"
+                    [style.background-color]="categoryColor(entry.categoryId)"
+                  ></div>
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <!-- Doughnut -->
     <div
       class="bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg p-5"
     >
@@ -159,51 +207,52 @@
         </p>
       }
     </div>
+  </div>
 
-    <div
-      class="bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg p-5"
-    >
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-surface-900 dark:text-surface-50">
-          {{ 'dashboard.recentTransactions' | translate }}
-        </h2>
-        <a routerLink="/app/transactions" class="text-sm text-primary-600 hover:underline">
-          {{ 'shell.nav.transactions' | translate }} →
-        </a>
-      </div>
-
-      @if (data().recent.length === 0) {
-        <p class="text-surface-500 dark:text-surface-400 py-8 text-center">
-          {{ 'dashboard.noTransactions' | translate }}
-        </p>
-      } @else {
-        <ul data-testid="recent-list" class="divide-y divide-surface-200 dark:divide-surface-700">
-          @for (tx of data().recent; track tx.id) {
-            <li class="flex items-center gap-3 py-3">
-              <span
-                class="flex items-center justify-center w-8 h-8 rounded-full shrink-0"
-                [style.background-color]="categoryColor(tx.category_id) + '22'"
-                [style.color]="categoryColor(tx.category_id)"
-              >
-                <i [class]="'pi ' + categoryIcon(tx.category_id) + ' text-xs'"></i>
-              </span>
-              <span class="flex-1 min-w-0">
-                <span
-                  class="block text-sm font-medium text-surface-900 dark:text-surface-50 truncate"
-                >
-                  {{ tx.description || categoryName(tx.category_id) }}
-                </span>
-                <span class="block text-xs text-surface-500">
-                  {{ formatDate(tx.transaction_date) }}
-                </span>
-              </span>
-              <span class="text-sm whitespace-nowrap" [class]="amountClass(tx.type)">
-                {{ amountPrefix(tx.type) }} {{ formatCurrency(+tx.amount) }}
-              </span>
-            </li>
-          }
-        </ul>
-      }
+  <!-- Recent transactions (full width) -->
+  <div
+    class="bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg p-5"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-surface-900 dark:text-surface-50">
+        {{ 'dashboard.recentTransactions' | translate }}
+      </h2>
+      <a routerLink="/app/transactions" class="text-sm text-primary-600 hover:underline">
+        {{ 'shell.nav.transactions' | translate }} →
+      </a>
     </div>
+
+    @if (data().recent.length === 0) {
+      <p class="text-surface-500 dark:text-surface-400 py-8 text-center">
+        {{ 'dashboard.noTransactions' | translate }}
+      </p>
+    } @else {
+      <ul data-testid="recent-list" class="divide-y divide-surface-200 dark:divide-surface-700">
+        @for (tx of data().recent; track tx.id) {
+          <li class="flex items-center gap-3 py-3">
+            <span
+              class="flex items-center justify-center w-8 h-8 rounded-full shrink-0"
+              [style.background-color]="categoryColor(tx.category_id) + '22'"
+              [style.color]="categoryColor(tx.category_id)"
+            >
+              <i [class]="'pi ' + categoryIcon(tx.category_id) + ' text-xs'"></i>
+            </span>
+            <span class="flex-1 min-w-0">
+              <span
+                class="block text-sm font-medium text-surface-900 dark:text-surface-50 truncate"
+              >
+                {{ tx.description || categoryName(tx.category_id) }}
+              </span>
+              <span class="block text-xs text-surface-500">
+                {{ formatDate(tx.transaction_date) }}
+              </span>
+            </span>
+            <span class="text-sm whitespace-nowrap" [class]="amountClass(tx.type)">
+              {{ amountPrefix(tx.type) }} {{ formatCurrency(+tx.amount) }}
+            </span>
+          </li>
+        }
+      </ul>
+    }
   </div>
 </div>
