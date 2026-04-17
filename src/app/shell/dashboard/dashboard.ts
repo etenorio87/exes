@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { AuthService } from '../../core/auth.service';
 import { CategoriesService } from '../../core/categories.service';
@@ -35,6 +36,7 @@ export class Dashboard {
   private readonly categories = inject(CategoriesService);
   private readonly prefs = inject(UserPreferencesService);
   private readonly lang = inject(LanguageService);
+  private readonly translate = inject(TranslateService);
 
   readonly loading = signal(true);
   readonly data = signal<DashboardData>({
@@ -53,6 +55,12 @@ export class Dashboard {
   });
 
   constructor() {
+    const pageTitle = inject(Title);
+    effect(() => {
+      this.lang.current();
+      pageTitle.setTitle(`EXES — ${this.translate.instant('dashboard.title')}`);
+    });
+
     effect(() => {
       const user = this.auth.user();
       if (user) void this.refresh();

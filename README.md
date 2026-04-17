@@ -86,8 +86,8 @@ Desarrollo organizado por fases:
 - **Fase 0 — Infraestructura** ✅
   Esquema de BD + RLS + función de expansión de recurrencias. Setup de Angular, PrimeNG, Tailwind, Supabase y CI/CD.
 
-- **Fase 1 — MVP usable**
-  Autenticación (login/registro/recuperación). CRUD de transacciones puntuales con filtros básicos y paginación. Dashboard mínimo (balance del mes, gastos por categoría). Responsive móvil.
+- **Fase 1 — MVP usable** ✅
+  Autenticación, CRUD de categorías y transacciones con filtros y paginación, dashboard con gráficos Chart.js, i18n ES/EN, selector de idioma con banderas, papelera con restaurar, preferencias de usuario (moneda, formato de fecha).
 
 - **Fase 2 — Productividad**
   Transacciones recurrentes con patrón Google Calendar para edición. Reportes (mes vs anterior, evolución temporal, top categorías). Búsqueda, preferencias de usuario, modo oscuro.

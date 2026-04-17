@@ -73,7 +73,20 @@
         [filter]="true"
         appendTo="body"
         class="w-full"
-      />
+      >
+        <ng-template #item let-opt>
+          <span class="inline-flex items-center gap-2">
+            <span
+              class="w-5 h-5 rounded-full flex items-center justify-center text-xs"
+              [style.background-color]="opt.color + '22'"
+              [style.color]="opt.color"
+            >
+              <i [class]="'pi ' + opt.icon"></i>
+            </span>
+            <span>{{ opt.label }}</span>
+          </span>
+        </ng-template>
+      </p-multiselect>
     </div>
 
     <div class="flex items-center gap-2 pb-1">
@@ -240,7 +253,34 @@
           optionValue="value"
           appendTo="body"
           [filter]="true"
-        />
+        >
+          <ng-template #selectedItem let-opt>
+            @if (opt) {
+              <span class="inline-flex items-center gap-2">
+                <span
+                  class="w-5 h-5 rounded-full flex items-center justify-center text-xs"
+                  [style.background-color]="opt.color + '22'"
+                  [style.color]="opt.color"
+                >
+                  <i [class]="'pi ' + opt.icon"></i>
+                </span>
+                <span>{{ opt.label }}</span>
+              </span>
+            }
+          </ng-template>
+          <ng-template #item let-opt>
+            <span class="inline-flex items-center gap-2">
+              <span
+                class="w-5 h-5 rounded-full flex items-center justify-center text-xs"
+                [style.background-color]="opt.color + '22'"
+                [style.color]="opt.color"
+              >
+                <i [class]="'pi ' + opt.icon"></i>
+              </span>
+              <span>{{ opt.label }}</span>
+            </span>
+          </ng-template>
+        </p-select>
         @if (form.controls.category_id.touched && form.controls.category_id.invalid) {
           <small class="text-red-600">{{
             'transactions.errors.categoryRequired' | translate
