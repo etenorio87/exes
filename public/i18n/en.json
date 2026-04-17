@@ -120,7 +120,9 @@
     "recentTransactions": "Recent transactions",
     "noExpenses": "No expenses this month.",
     "noTransactions": "No transactions this month.",
-    "amount": "Amount"
+    "amount": "Amount",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "transactions": {
     "title": "Transactions",

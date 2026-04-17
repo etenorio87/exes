@@ -1,8 +1,18 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
+import { DatePickerModule } from 'primeng/datepicker';
 import { AuthService } from '../../core/auth.service';
 import { CategoriesService } from '../../core/categories.service';
 import { DashboardData, DashboardService } from '../../core/dashboard.service';
@@ -10,13 +20,13 @@ import { LanguageService } from '../../core/language.service';
 import { TransactionType } from '../../core/transactions.service';
 import { UserPreferencesService } from '../../core/user-preferences.service';
 
-function startOfMonth(d = new Date()): string {
+function startOfMonth(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
   return `${y}-${m}-01`;
 }
 
-function endOfMonth(d = new Date()): string {
+function endOfMonth(d: Date): string {
   const end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
   const y = end.getFullYear();
   const m = String(end.getMonth() + 1).padStart(2, '0');
@@ -26,7 +36,7 @@ function endOfMonth(d = new Date()): string {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, TranslateModule, ChartModule],
+  imports: [FormsModule, RouterLink, TranslateModule, ButtonModule, ChartModule, DatePickerModule],
   templateUrl: './dashboard.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -37,6 +47,19 @@ export class Dashboard {
   private readonly prefs = inject(UserPreferencesService);
   private readonly lang = inject(LanguageService);
   private readonly translate = inject(TranslateService);
+
+  /** The first day of the currently displayed month. */
+  readonly selectedMonth = signal(new Date());
+
+  /** Formatted month label, reactive to language + selectedMonth. */
+  readonly monthLabel = computed(() => {
+    this.lang.current();
+    const d = this.selectedMonth();
+    return new Intl.DateTimeFormat(this.lang.current(), {
+      month: 'long',
+      year: 'numeric',
+    }).format(d);
+  });
 
   readonly loading = signal(true);
   readonly data = signal<DashboardData>({
@@ -61,16 +84,34 @@ export class Dashboard {
       pageTitle.setTitle(`EXES — ${this.translate.instant('dashboard.title')}`);
     });
 
+    // Refetch whenever user or selectedMonth changes.
     effect(() => {
       const user = this.auth.user();
-      if (user) void this.refresh();
+      const month = this.selectedMonth();
+      if (user) void this.refresh(month);
     });
   }
 
-  private async refresh(): Promise<void> {
+  // ─── Month navigation ──────────────────────────────────────────────────
+  prevMonth(): void {
+    const d = this.selectedMonth();
+    this.selectedMonth.set(new Date(d.getFullYear(), d.getMonth() - 1, 1));
+  }
+
+  nextMonth(): void {
+    const d = this.selectedMonth();
+    this.selectedMonth.set(new Date(d.getFullYear(), d.getMonth() + 1, 1));
+  }
+
+  onMonthSelect(date: Date): void {
+    this.selectedMonth.set(new Date(date.getFullYear(), date.getMonth(), 1));
+  }
+
+  // ─── Data loading ────────────────────────────────────────────────────
+  private async refresh(month: Date): Promise<void> {
     this.loading.set(true);
     try {
-      const result = await this.dashboardService.load(startOfMonth(), endOfMonth());
+      const result = await this.dashboardService.load(startOfMonth(month), endOfMonth(month));
       this.data.set(result);
       this.buildChart(result);
     } finally {
@@ -100,7 +141,7 @@ export class Dashboard {
     });
   }
 
-  // Template helpers
+  // ─── Template helpers ────────────────────────────────────────────────
   formatCurrency(amount: number): string {
     return this.prefs.formatCurrency(amount);
   }
