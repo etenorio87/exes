@@ -111,6 +111,17 @@
       "signOut": "Sign out"
     }
   },
+  "dashboard": {
+    "title": "Dashboard",
+    "income": "Income",
+    "expenses": "Expenses",
+    "balance": "Balance",
+    "expensesByCategory": "Expenses by category",
+    "recentTransactions": "Recent transactions",
+    "noExpenses": "No expenses this month.",
+    "noTransactions": "No transactions this month.",
+    "amount": "Amount"
+  },
   "transactions": {
     "title": "Transactions",
     "new": "New transaction",

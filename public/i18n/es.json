@@ -111,6 +111,17 @@
       "signOut": "Cerrar sesión"
     }
   },
+  "dashboard": {
+    "title": "Panel",
+    "income": "Ingresos",
+    "expenses": "Gastos",
+    "balance": "Balance",
+    "expensesByCategory": "Gastos por categoría",
+    "recentTransactions": "Últimas transacciones",
+    "noExpenses": "Sin gastos este mes.",
+    "noTransactions": "Sin transacciones este mes.",
+    "amount": "Cantidad"
+  },
   "transactions": {
     "title": "Transacciones",
     "new": "Nueva transacción",
