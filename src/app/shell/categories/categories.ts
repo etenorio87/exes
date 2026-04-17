@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -80,6 +88,14 @@ export class Categories {
   readonly icons = ICON_PALETTE;
 
   readonly filter = signal<FilterValue>('all');
+
+  constructor() {
+    const pageTitle = inject(Title);
+    effect(() => {
+      this.lang.current();
+      pageTitle.setTitle(`EXES — ${this.translate.instant('categories.title')}`);
+    });
+  }
 
   readonly filterOptions = computed(() => {
     // Depend on the language signal so labels re-translate on lang change.

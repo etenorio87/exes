@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -147,6 +148,8 @@ export class Transactions {
     return this.categories.all().map((c) => ({
       label: this.categories.displayName(c),
       value: c.id,
+      color: c.color ?? '#64748b',
+      icon: c.icon ?? 'pi-tag',
     }));
   });
 
@@ -179,10 +182,21 @@ export class Transactions {
     return this.categories
       .all()
       .filter((c) => c.type === t || c.type === 'both')
-      .map((c) => ({ label: this.categories.displayName(c), value: c.id }));
+      .map((c) => ({
+        label: this.categories.displayName(c),
+        value: c.id,
+        color: c.color ?? '#64748b',
+        icon: c.icon ?? 'pi-tag',
+      }));
   });
 
   constructor() {
+    const pageTitle = inject(Title);
+    effect(() => {
+      this.lang.current();
+      pageTitle.setTitle(`EXES — ${this.translate.instant('transactions.title')}`);
+    });
+
     // Refetch whenever any filter or pagination signal changes.
     effect(() => {
       this.dateFrom();
