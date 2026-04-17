@@ -369,6 +369,11 @@ export class Transactions {
           description: v.description.trim() || null,
         };
         const scope = this.scopeChoice();
+        // RecurrenceInput shares most fields with TransactionInput but does NOT
+        // have `transaction_date` (recurrences use start_date/end_date). We must
+        // destructure to avoid passing an unknown column to the recurrences table.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { transaction_date: _, ...recurrenceFields } = input;
         if (scope === 'one') {
           await this.recurrences.editOne(editing.recurrence_id, editing.transaction_date, input);
         } else if (scope === 'future') {
@@ -376,7 +381,7 @@ export class Transactions {
             editing.recurrence_id,
             editing.transaction_date,
             {
-              ...input,
+              ...recurrenceFields,
               frequency: this.frequency(),
               start_date: editing.transaction_date,
               end_date:
@@ -386,7 +391,7 @@ export class Transactions {
           );
         } else {
           await this.recurrences.editAll(editing.recurrence_id, {
-            ...input,
+            ...recurrenceFields,
             frequency: this.frequency(),
             start_date: editing.transaction_date,
             end_date:
