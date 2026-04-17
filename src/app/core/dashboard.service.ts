@@ -1,19 +1,20 @@
 import { inject, Injectable } from '@angular/core';
 import { CategoriesService } from './categories.service';
 import { SupabaseService } from './supabase.service';
-import { Transaction } from './transactions.service';
+import { TransactionRow } from './transactions.service';
 
 export interface DashboardData {
   income: number;
   expenses: number;
   balance: number;
   expensesByCategory: { categoryId: string; total: number }[];
-  recent: Transaction[];
+  recent: TransactionRow[];
 }
 
 /**
- * Aggregation queries for the dashboard. All computations are client-side
- * for MVP (dataset is small — a single month of transactions).
+ * Aggregation queries for the dashboard. Uses `get_transactions` RPC so
+ * virtual recurrence occurrences are included in all computations (cards,
+ * chart, recent list).
  */
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -21,16 +22,13 @@ export class DashboardService {
   private readonly categories = inject(CategoriesService);
 
   async load(startDate: string, endDate: string): Promise<DashboardData> {
-    const { data, error } = await this.supabase.client
-      .from('transactions')
-      .select('*')
-      .is('deleted_at', null)
-      .gte('transaction_date', startDate)
-      .lte('transaction_date', endDate)
-      .order('transaction_date', { ascending: false });
+    const { data, error } = await this.supabase.client.rpc('get_transactions', {
+      p_start: startDate,
+      p_end: endDate,
+    });
 
     if (error) throw error;
-    const rows = data ?? [];
+    const rows = (data ?? []).sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
 
     let income = 0;
     let expenses = 0;

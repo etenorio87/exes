@@ -12,21 +12,26 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { SelectModule } from 'primeng/select';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { TooltipModule } from 'primeng/tooltip';
 import { CategoriesService } from '../../core/categories.service';
 import { LanguageService } from '../../core/language.service';
+import { RecurrenceFrequency, RecurrencesService } from '../../core/recurrences.service';
 import {
   PaymentMethod,
-  Transaction,
+  TransactionInput,
+  TransactionRow,
   TransactionsService,
   TransactionType,
 } from '../../core/transactions.service';
@@ -51,6 +56,9 @@ function dateOnly(d: Date | null): string | null {
   return `${y}-${m}-${day}`;
 }
 
+type ScopeAction = 'edit' | 'delete';
+type ScopeChoice = 'one' | 'future' | 'all';
+
 @Component({
   selector: 'app-transactions',
   imports: [
@@ -58,16 +66,19 @@ function dateOnly(d: Date | null): string | null {
     ReactiveFormsModule,
     TranslateModule,
     ButtonModule,
+    CheckboxModule,
     DatePickerModule,
     DialogModule,
     InputNumberModule,
     InputTextModule,
     MultiSelectModule,
+    RadioButtonModule,
     SelectModule,
     SelectButtonModule,
     TableModule,
     TagModule,
     ToggleSwitchModule,
+    TooltipModule,
   ],
   templateUrl: './transactions.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,6 +86,7 @@ function dateOnly(d: Date | null): string | null {
 export class Transactions {
   private readonly fb = inject(FormBuilder);
   private readonly txService = inject(TransactionsService);
+  private readonly recurrences = inject(RecurrencesService);
   private readonly categories = inject(CategoriesService);
   private readonly prefs = inject(UserPreferencesService);
   private readonly translate = inject(TranslateService);
@@ -85,22 +97,28 @@ export class Transactions {
   readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
   readonly prefsCurrency = this.prefs.currency;
 
-  // ─── Filter state (signals) ───────────────────────────────────────────────
+  // ─── Filter state ────────────────────────────────────────────────────
   readonly dateFrom = signal<Date | null>(startOfMonth());
   readonly dateTo = signal<Date | null>(endOfMonth());
   readonly typeFilter = signal<TransactionType | null>(null);
   readonly categoryFilter = signal<string[]>([]);
   readonly includeDeleted = signal(false);
-  readonly page = signal(0);
-  readonly pageSize = signal<number>(25);
 
-  // ─── Data ────────────────────────────────────────────────────────────────
-  readonly rows = signal<Transaction[]>([]);
-  readonly total = signal(0);
+  // ─── Data (client-side pagination) ───────────────────────────────────
+  readonly allRows = signal<TransactionRow[]>([]);
   readonly loading = signal(false);
   private fetchToken = 0;
 
-  // ─── Computed labels (reactive to lang) ──────────────────────────────────
+  readonly filteredRows = computed(() => {
+    let rows = this.allRows();
+    const t = this.typeFilter();
+    const cats = this.categoryFilter();
+    if (t) rows = rows.filter((r) => r.type === t);
+    if (cats.length) rows = rows.filter((r) => cats.includes(r.category_id));
+    return rows;
+  });
+
+  // ─── Computed labels (reactive to lang) ──────────────────────────────
   readonly typeFilterOptions = computed(() => {
     this.lang.current();
     return [
@@ -138,11 +156,14 @@ export class Transactions {
     }));
   });
 
-  /**
-   * Categories for the multi-select filter (all of them).
-   * For the form's category dropdown we filter by the form's current type so
-   * "expense" transactions can't be assigned an "income"-only category.
-   */
+  readonly frequencyOptions = computed(() => {
+    this.lang.current();
+    return this.recurrences.frequencies.map((f) => ({
+      label: this.translate.instant(`recurrences.frequencies.${f}`),
+      value: f,
+    }));
+  });
+
   readonly allCategoryOptions = computed(() => {
     this.lang.current();
     return this.categories.all().map((c) => ({
@@ -153,9 +174,9 @@ export class Transactions {
     }));
   });
 
-  // ─── Dialog & form ───────────────────────────────────────────────────────
+  // ─── Dialog & form ───────────────────────────────────────────────────
   readonly dialogOpen = signal(false);
-  readonly editing = signal<Transaction | null>(null);
+  readonly editing = signal<TransactionRow | null>(null);
   readonly saving = signal(false);
   private dialogAccountId: string | null = null;
 
@@ -168,10 +189,10 @@ export class Transactions {
     payment_method: ['card' as PaymentMethod, [Validators.required]],
   });
 
-  /**
-   * Track form.type as a signal so `formCategoryOptions` recomputes when the
-   * user toggles income/expense.
-   */
+  readonly isRecurrent = signal(false);
+  readonly frequency = signal<RecurrenceFrequency>('monthly');
+  readonly endDate = signal<Date | null>(null);
+
   private readonly formType = toSignal(this.form.controls.type.valueChanges, {
     initialValue: this.form.controls.type.value,
   });
@@ -190,6 +211,12 @@ export class Transactions {
       }));
   });
 
+  // ─── Scope dialog (Google Calendar pattern) ──────────────────────────
+  readonly scopeDialogOpen = signal(false);
+  readonly scopeAction = signal<ScopeAction>('edit');
+  readonly scopeChoice = signal<ScopeChoice>('one');
+  private scopeRow: TransactionRow | null = null;
+
   constructor() {
     const pageTitle = inject(Title);
     effect(() => {
@@ -197,19 +224,14 @@ export class Transactions {
       pageTitle.setTitle(`EXES — ${this.translate.instant('transactions.title')}`);
     });
 
-    // Refetch whenever any filter or pagination signal changes.
+    // Refetch whenever date range or deleted toggle changes.
     effect(() => {
       this.dateFrom();
       this.dateTo();
-      this.typeFilter();
-      this.categoryFilter();
       this.includeDeleted();
-      this.page();
-      this.pageSize();
       void this.fetch();
     });
 
-    // Clear selected category when the type toggle changes and it's no longer compatible.
     this.form.controls.type.valueChanges.subscribe(() => {
       const catId = this.form.controls.category_id.value;
       if (!catId) return;
@@ -221,47 +243,27 @@ export class Transactions {
   }
 
   private async fetch(): Promise<void> {
+    const from = dateOnly(this.dateFrom());
+    const to = dateOnly(this.dateTo());
+    if (!from || !to) return;
     const myToken = ++this.fetchToken;
     this.loading.set(true);
     try {
-      const result = await this.txService.load(
-        {
-          dateFrom: dateOnly(this.dateFrom()),
-          dateTo: dateOnly(this.dateTo()),
-          type: this.typeFilter(),
-          categoryIds: this.categoryFilter().length ? this.categoryFilter() : null,
-          includeDeleted: this.includeDeleted(),
-        },
-        { page: this.page(), pageSize: this.pageSize() },
-      );
-      // Bail if a newer fetch started while we were awaiting.
+      const rows = this.includeDeleted()
+        ? await this.txService.loadDeleted(from, to)
+        : await this.txService.loadAll(from, to);
       if (myToken !== this.fetchToken) return;
-      this.rows.set(result.rows);
-      this.total.set(result.total);
+      this.allRows.set(rows);
     } finally {
       if (myToken === this.fetchToken) this.loading.set(false);
     }
   }
 
-  onPage(event: { first: number; rows: number }): void {
-    this.pageSize.set(event.rows);
-    this.page.set(Math.floor(event.first / event.rows));
-  }
-
-  resetFiltersToCurrentMonth(): void {
-    this.dateFrom.set(startOfMonth());
-    this.dateTo.set(endOfMonth());
-    this.typeFilter.set(null);
-    this.categoryFilter.set([]);
-    this.page.set(0);
-  }
-
   toggleDeleted(value: boolean): void {
     this.includeDeleted.set(value);
-    this.page.set(0);
   }
 
-  // ─── Helpers used from template ──────────────────────────────────────────
+  // ─── Helpers ──────────────────────────────────────────────────────────
   category(id: string) {
     return this.txService.categoriesById().get(id);
   }
@@ -283,10 +285,14 @@ export class Transactions {
     return type === 'income' ? 'text-emerald-600 font-semibold' : 'text-red-600 font-semibold';
   }
 
-  // ─── CRUD actions ────────────────────────────────────────────────────────
+  // ─── CRUD ─────────────────────────────────────────────────────────────
   async openCreate(): Promise<void> {
     this.dialogAccountId = await this.txService.getDefaultAccountId();
     this.editing.set(null);
+    this.isRecurrent.set(false);
+    this.frequency.set('monthly');
+    const today = dateOnly(new Date())!;
+    this.endDate.set(new Date(this.recurrences.defaultEndDate(today)));
     this.form.reset({
       type: 'expense',
       amount: 0,
@@ -298,9 +304,10 @@ export class Transactions {
     this.dialogOpen.set(true);
   }
 
-  async openEdit(tx: Transaction): Promise<void> {
+  openEditDirect(tx: TransactionRow): void {
     this.dialogAccountId = tx.account_id;
     this.editing.set(tx);
+    this.isRecurrent.set(false); // hide recurrence fields in edit mode
     this.form.reset({
       type: tx.type,
       amount: Number(tx.amount),
@@ -312,6 +319,18 @@ export class Transactions {
     this.dialogOpen.set(true);
   }
 
+  /** Called when clicking edit on a row. Routes to scope dialog if virtual. */
+  openEdit(tx: TransactionRow): void {
+    if (tx.is_virtual) {
+      this.scopeRow = tx;
+      this.scopeAction.set('edit');
+      this.scopeChoice.set('one');
+      this.scopeDialogOpen.set(true);
+    } else {
+      this.openEditDirect(tx);
+    }
+  }
+
   closeDialog(): void {
     this.dialogOpen.set(false);
   }
@@ -321,21 +340,77 @@ export class Transactions {
     if (!this.dialogAccountId) return;
     this.saving.set(true);
     const v = this.form.getRawValue();
-    const input = {
-      type: v.type as TransactionType,
-      amount: v.amount,
-      category_id: v.category_id,
-      account_id: this.dialogAccountId,
-      payment_method: v.payment_method as PaymentMethod,
-      transaction_date: dateOnly(v.transaction_date)!,
-      description: v.description.trim() || null,
-    };
+    const txDate = dateOnly(v.transaction_date)!;
     try {
       const editing = this.editing();
-      if (editing) {
-        await this.txService.update(editing.id, input);
+
+      if (!editing && this.isRecurrent()) {
+        // Create recurrence
+        await this.recurrences.create({
+          type: v.type as TransactionType,
+          amount: v.amount,
+          category_id: v.category_id,
+          account_id: this.dialogAccountId,
+          payment_method: v.payment_method as PaymentMethod,
+          description: v.description.trim() || null,
+          frequency: this.frequency(),
+          start_date: txDate,
+          end_date: dateOnly(this.endDate())!,
+        });
+      } else if (editing && editing.is_virtual && editing.recurrence_id) {
+        // Editing a virtual occurrence — scope was chosen earlier
+        const input: TransactionInput = {
+          type: v.type as TransactionType,
+          amount: v.amount,
+          category_id: v.category_id,
+          account_id: this.dialogAccountId,
+          payment_method: v.payment_method as PaymentMethod,
+          transaction_date: txDate,
+          description: v.description.trim() || null,
+        };
+        const scope = this.scopeChoice();
+        // RecurrenceInput shares most fields with TransactionInput but does NOT
+        // have `transaction_date` (recurrences use start_date/end_date). We must
+        // destructure to avoid passing an unknown column to the recurrences table.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { transaction_date: _, ...recurrenceFields } = input;
+        if (scope === 'one') {
+          await this.recurrences.editOne(editing.recurrence_id, editing.transaction_date, input);
+        } else if (scope === 'future') {
+          await this.recurrences.editThisAndFuture(
+            editing.recurrence_id,
+            editing.transaction_date, // cut original at the ORIGINAL date
+            {
+              ...recurrenceFields,
+              frequency: this.frequency(),
+              start_date: txDate, // new series starts at the form's date
+              end_date: dateOnly(this.endDate()) ?? this.recurrences.defaultEndDate(txDate),
+            },
+          );
+        } else {
+          await this.recurrences.editAll(editing.recurrence_id, {
+            ...recurrenceFields,
+            frequency: this.frequency(),
+            start_date: txDate, // use the form's date
+            end_date: dateOnly(this.endDate()) ?? this.recurrences.defaultEndDate(txDate),
+          });
+        }
       } else {
-        await this.txService.create(input);
+        // Normal transaction create/edit
+        const input: TransactionInput = {
+          type: v.type as TransactionType,
+          amount: v.amount,
+          category_id: v.category_id,
+          account_id: this.dialogAccountId,
+          payment_method: v.payment_method as PaymentMethod,
+          transaction_date: txDate,
+          description: v.description.trim() || null,
+        };
+        if (editing) {
+          await this.txService.update(editing.id, input);
+        } else {
+          await this.txService.create(input);
+        }
       }
       this.message.add({
         severity: 'success',
@@ -354,19 +429,27 @@ export class Transactions {
     }
   }
 
-  confirmDelete(tx: Transaction): void {
-    this.confirm.confirm({
-      message: this.translate.instant('transactions.deleteConfirm'),
-      header: this.translate.instant('common.confirm'),
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: this.translate.instant('common.delete'),
-      rejectLabel: this.translate.instant('common.cancel'),
-      acceptButtonProps: { severity: 'danger' },
-      accept: () => void this.doDelete(tx.id),
-    });
+  // ─── Delete ───────────────────────────────────────────────────────────
+  confirmDelete(tx: TransactionRow): void {
+    if (tx.is_virtual) {
+      this.scopeRow = tx;
+      this.scopeAction.set('delete');
+      this.scopeChoice.set('one');
+      this.scopeDialogOpen.set(true);
+    } else {
+      this.confirm.confirm({
+        message: this.translate.instant('transactions.deleteConfirm'),
+        header: this.translate.instant('common.confirm'),
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: this.translate.instant('common.delete'),
+        rejectLabel: this.translate.instant('common.cancel'),
+        acceptButtonProps: { severity: 'danger' },
+        accept: () => void this.doDeleteReal(tx.id),
+      });
+    }
   }
 
-  private async doDelete(id: string): Promise<void> {
+  private async doDeleteReal(id: string): Promise<void> {
     try {
       await this.txService.softDelete(id);
       this.message.add({
@@ -382,7 +465,7 @@ export class Transactions {
     }
   }
 
-  async restore(tx: Transaction): Promise<void> {
+  async restore(tx: TransactionRow): Promise<void> {
     try {
       await this.txService.restore(tx.id);
       this.message.add({
@@ -396,5 +479,47 @@ export class Transactions {
         summary: this.translate.instant('transactions.errors.generic'),
       });
     }
+  }
+
+  // ─── Scope dialog (Google Calendar) ───────────────────────────────────
+  closeScopeDialog(): void {
+    this.scopeDialogOpen.set(false);
+    this.scopeRow = null;
+  }
+
+  async confirmScope(): Promise<void> {
+    const row = this.scopeRow;
+    if (!row) return;
+    this.scopeDialogOpen.set(false);
+    const action = this.scopeAction();
+    const scope = this.scopeChoice();
+
+    if (action === 'edit') {
+      this.openEditDirect(row);
+      // scopeChoice is preserved so save() knows the scope.
+    } else {
+      // Delete with chosen scope
+      try {
+        if (!row.recurrence_id) return;
+        if (scope === 'one') {
+          await this.recurrences.deleteOne(row.recurrence_id, row.transaction_date);
+        } else if (scope === 'future') {
+          await this.recurrences.deleteThisAndFuture(row.recurrence_id, row.transaction_date);
+        } else {
+          await this.recurrences.deleteAll(row.recurrence_id);
+        }
+        this.message.add({
+          severity: 'success',
+          summary: this.translate.instant('transactions.deletedToast'),
+        });
+        await this.fetch();
+      } catch {
+        this.message.add({
+          severity: 'error',
+          summary: this.translate.instant('transactions.errors.generic'),
+        });
+      }
+    }
+    this.scopeRow = null;
   }
 }
