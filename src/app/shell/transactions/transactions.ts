@@ -384,8 +384,7 @@ export class Transactions {
               ...recurrenceFields,
               frequency: this.frequency(),
               start_date: txDate, // new series starts at the form's date
-              end_date:
-                dateOnly(this.endDate()) ?? this.recurrences.defaultEndDate(txDate),
+              end_date: dateOnly(this.endDate()) ?? this.recurrences.defaultEndDate(txDate),
             },
           );
         } else {
@@ -393,8 +392,7 @@ export class Transactions {
             ...recurrenceFields,
             frequency: this.frequency(),
             start_date: txDate, // use the form's date
-            end_date:
-              dateOnly(this.endDate()) ?? this.recurrences.defaultEndDate(txDate),
+            end_date: dateOnly(this.endDate()) ?? this.recurrences.defaultEndDate(txDate),
           });
         }
       } else {

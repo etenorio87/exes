@@ -28,9 +28,7 @@ export class DashboardService {
     });
 
     if (error) throw error;
-    const rows = (data ?? []).sort((a, b) =>
-      b.transaction_date.localeCompare(a.transaction_date),
-    );
+    const rows = (data ?? []).sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
 
     let income = 0;
     let expenses = 0;
