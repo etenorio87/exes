@@ -125,7 +125,9 @@
     "nextMonth": "Next month",
     "vsPrevMonth": "vs previous month",
     "evolution": "Evolution (12 months)",
-    "noEvolutionData": "Not enough data for the chart."
+    "noEvolutionData": "Not enough data for the chart.",
+    "topCategories": "Top 5 categories",
+    "noTopCategories": "No expenses by category this month."
   },
   "recurrences": {
     "toggle": "Recurring",
