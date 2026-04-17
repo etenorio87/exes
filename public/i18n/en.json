@@ -122,7 +122,10 @@
     "noTransactions": "No transactions this month.",
     "amount": "Amount",
     "prevMonth": "Previous month",
-    "nextMonth": "Next month"
+    "nextMonth": "Next month",
+    "vsPrevMonth": "vs previous month",
+    "evolution": "Evolution (12 months)",
+    "noEvolutionData": "Not enough data for the chart."
   },
   "recurrences": {
     "toggle": "Recurring",
