@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -149,15 +150,6 @@ export class Transactions {
     }));
   });
 
-  readonly formCategoryOptions = computed(() => {
-    this.lang.current();
-    const t = this.form.controls.type.value as TransactionType;
-    return this.categories
-      .all()
-      .filter((c) => c.type === t || c.type === 'both')
-      .map((c) => ({ label: this.categories.displayName(c), value: c.id }));
-  });
-
   // ─── Dialog & form ───────────────────────────────────────────────────────
   readonly dialogOpen = signal(false);
   readonly editing = signal<Transaction | null>(null);
@@ -173,6 +165,23 @@ export class Transactions {
     payment_method: ['card' as PaymentMethod, [Validators.required]],
   });
 
+  /**
+   * Track form.type as a signal so `formCategoryOptions` recomputes when the
+   * user toggles income/expense.
+   */
+  private readonly formType = toSignal(this.form.controls.type.valueChanges, {
+    initialValue: this.form.controls.type.value,
+  });
+
+  readonly formCategoryOptions = computed(() => {
+    this.lang.current();
+    const t = this.formType() as TransactionType;
+    return this.categories
+      .all()
+      .filter((c) => c.type === t || c.type === 'both')
+      .map((c) => ({ label: this.categories.displayName(c), value: c.id }));
+  });
+
   constructor() {
     // Refetch whenever any filter or pagination signal changes.
     effect(() => {
@@ -184,6 +193,16 @@ export class Transactions {
       this.page();
       this.pageSize();
       void this.fetch();
+    });
+
+    // Clear selected category when the type toggle changes and it's no longer compatible.
+    this.form.controls.type.valueChanges.subscribe(() => {
+      const catId = this.form.controls.category_id.value;
+      if (!catId) return;
+      const cat = this.txService.categoriesById().get(catId);
+      if (cat && cat.type !== 'both' && cat.type !== this.form.controls.type.value) {
+        this.form.controls.category_id.reset('');
+      }
     });
   }
 
