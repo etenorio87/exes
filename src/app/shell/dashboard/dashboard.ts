@@ -20,20 +20,6 @@ import { LanguageService } from '../../core/language.service';
 import { TransactionType } from '../../core/transactions.service';
 import { UserPreferencesService } from '../../core/user-preferences.service';
 
-function startOfMonth(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  return `${y}-${m}-01`;
-}
-
-function endOfMonth(d: Date): string {
-  const end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
-  const y = end.getFullYear();
-  const m = String(end.getMonth() + 1).padStart(2, '0');
-  const day = String(end.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
 @Component({
   selector: 'app-dashboard',
   imports: [FormsModule, RouterLink, TranslateModule, ButtonModule, ChartModule, DatePickerModule],
@@ -48,10 +34,8 @@ export class Dashboard {
   private readonly lang = inject(LanguageService);
   private readonly translate = inject(TranslateService);
 
-  /** The first day of the currently displayed month. */
   readonly selectedMonth = signal(new Date());
 
-  /** Formatted month label, reactive to language + selectedMonth. */
   readonly monthLabel = computed(() => {
     this.lang.current();
     const d = this.selectedMonth();
@@ -63,18 +47,27 @@ export class Dashboard {
 
   readonly loading = signal(true);
   readonly data = signal<DashboardData>({
-    income: 0,
-    expenses: 0,
-    balance: 0,
+    current: { income: 0, expenses: 0, balance: 0 },
+    previous: { income: 0, expenses: 0, balance: 0 },
     expensesByCategory: [],
     recent: [],
+    evolution: { labels: [], income: [], expenses: [], balance: [] },
   });
 
-  readonly chartData = signal<object | null>(null);
-  readonly chartOptions = signal<object>({
+  readonly doughnutData = signal<object | null>(null);
+  readonly doughnutOptions = signal<object>({
     plugins: { legend: { position: 'bottom' as const, labels: { padding: 16 } } },
     responsive: true,
     maintainAspectRatio: false,
+  });
+
+  readonly evolutionData = signal<object | null>(null);
+  readonly evolutionOptions = signal<object>({
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index' as const, intersect: false },
+    plugins: { legend: { position: 'bottom' as const } },
+    scales: { y: { beginAtZero: true } },
   });
 
   constructor() {
@@ -84,7 +77,6 @@ export class Dashboard {
       pageTitle.setTitle(`EXES — ${this.translate.instant('dashboard.title')}`);
     });
 
-    // Refetch whenever user or selectedMonth changes.
     effect(() => {
       const user = this.auth.user();
       const month = this.selectedMonth();
@@ -111,34 +103,97 @@ export class Dashboard {
   private async refresh(month: Date): Promise<void> {
     this.loading.set(true);
     try {
-      const result = await this.dashboardService.load(startOfMonth(month), endOfMonth(month));
+      const result = await this.dashboardService.load(month);
       this.data.set(result);
-      this.buildChart(result);
+      this.buildDoughnut(result);
+      this.buildEvolution(result);
     } finally {
       this.loading.set(false);
     }
   }
 
-  private buildChart(d: DashboardData): void {
+  private buildDoughnut(d: DashboardData): void {
     if (d.expensesByCategory.length === 0) {
-      this.chartData.set(null);
+      this.doughnutData.set(null);
       return;
     }
     const labels: string[] = [];
     const values: number[] = [];
     const bgColors: string[] = [];
-
     for (const entry of d.expensesByCategory) {
       const cat = this.categories.all().find((c) => c.id === entry.categoryId);
       labels.push(cat ? this.categories.displayName(cat) : '?');
       values.push(entry.total);
       bgColors.push(cat?.color ?? '#64748b');
     }
-
-    this.chartData.set({
+    this.doughnutData.set({
       labels,
       datasets: [{ data: values, backgroundColor: bgColors, hoverOffset: 8 }],
     });
+  }
+
+  private buildEvolution(d: DashboardData): void {
+    const hasData =
+      d.evolution.income.some((v) => v > 0) || d.evolution.expenses.some((v) => v > 0);
+    if (!hasData) {
+      this.evolutionData.set(null);
+      return;
+    }
+    const locale = this.lang.current();
+    const labels = d.evolution.labels.map((ym) => {
+      const [y, m] = ym.split('-');
+      const date = new Date(+y, +m - 1, 1);
+      return new Intl.DateTimeFormat(locale, { month: 'short' }).format(date);
+    });
+    this.evolutionData.set({
+      labels,
+      datasets: [
+        {
+          label: this.translate.instant('dashboard.income'),
+          data: d.evolution.income,
+          borderColor: '#10b981',
+          backgroundColor: '#10b98133',
+          fill: false,
+          tension: 0.3,
+        },
+        {
+          label: this.translate.instant('dashboard.expenses'),
+          data: d.evolution.expenses,
+          borderColor: '#ef4444',
+          backgroundColor: '#ef444433',
+          fill: false,
+          tension: 0.3,
+        },
+        {
+          label: this.translate.instant('dashboard.balance'),
+          data: d.evolution.balance,
+          borderColor: '#3b82f6',
+          backgroundColor: '#3b82f633',
+          fill: false,
+          tension: 0.3,
+        },
+      ],
+    });
+  }
+
+  // ─── Comparison helpers ──────────────────────────────────────────────
+  delta(current: number, previous: number): string {
+    if (previous === 0) return current > 0 ? '+100%' : '—';
+    const pct = ((current - previous) / previous) * 100;
+    const sign = pct >= 0 ? '+' : '';
+    return `${sign}${pct.toFixed(0)}%`;
+  }
+
+  deltaIcon(current: number, previous: number): string {
+    if (current > previous) return 'pi pi-arrow-up';
+    if (current < previous) return 'pi pi-arrow-down';
+    return 'pi pi-minus';
+  }
+
+  deltaColor(current: number, previous: number, invert = false): string {
+    const up = current >= previous;
+    if (invert) return up ? 'text-red-500' : 'text-emerald-500';
+    return up ? 'text-emerald-500' : 'text-red-500';
   }
 
   // ─── Template helpers ────────────────────────────────────────────────

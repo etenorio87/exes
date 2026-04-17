@@ -122,7 +122,10 @@
     "noTransactions": "Sin transacciones este mes.",
     "amount": "Cantidad",
     "prevMonth": "Mes anterior",
-    "nextMonth": "Mes siguiente"
+    "nextMonth": "Mes siguiente",
+    "vsPrevMonth": "vs mes anterior",
+    "evolution": "Evolución (12 meses)",
+    "noEvolutionData": "Sin datos suficientes para el gráfico."
   },
   "recurrences": {
     "toggle": "Recurrente",

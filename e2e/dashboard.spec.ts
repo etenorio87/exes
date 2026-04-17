@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Creates a transaction and verifies the dashboard cards show correct totals
- * and the chart + recent list are populated.
+ * and the charts + recent list are populated.
  */
 test.describe('dashboard', () => {
   test('shows totals and chart after creating a transaction', async ({ page }) => {
@@ -35,9 +35,9 @@ test.describe('dashboard', () => {
     // Go to dashboard and verify totals
     await page.goto('/app/dashboard');
     await expect(page.locator('[data-testid=dashboard-expenses]')).toContainText('75');
-    // Chart should be visible (doughnut renders a <canvas>)
-    await expect(page.locator('canvas')).toBeVisible();
+    // At least one chart canvas should be visible (doughnut or evolution)
+    await expect(page.locator('canvas').first()).toBeVisible();
     // Recent list should show 1 transaction
-    await expect(page.locator('ul li')).toHaveCount(1);
+    await expect(page.locator('[data-testid=recent-list] li')).toHaveCount(1);
   });
 });
