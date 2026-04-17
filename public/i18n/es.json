@@ -124,6 +124,26 @@
     "prevMonth": "Mes anterior",
     "nextMonth": "Mes siguiente"
   },
+  "recurrences": {
+    "toggle": "Recurrente",
+    "frequency": "Frecuencia",
+    "endDate": "Hasta",
+    "frequencies": {
+      "monthly": "Mensual",
+      "quarterly": "Trimestral",
+      "semiannual": "Semestral",
+      "annual": "Anual"
+    },
+    "editDialog": {
+      "title": "Editar transacción recurrente",
+      "deleteTitle": "Eliminar transacción recurrente",
+      "onlyThis": "Solo esta ocurrencia",
+      "thisAndFuture": "Esta y futuras",
+      "all": "Todas las ocurrencias",
+      "continue": "Continuar"
+    },
+    "indicator": "Recurrente"
+  },
   "transactions": {
     "title": "Transacciones",
     "new": "Nueva transacción",

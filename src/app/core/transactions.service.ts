@@ -8,6 +8,9 @@ export type Transaction = Database['public']['Tables']['transactions']['Row'];
 export type TransactionType = Database['public']['Enums']['transaction_type'];
 export type PaymentMethod = Database['public']['Enums']['payment_method'];
 
+/** Row returned by get_transactions() RPC — covers real + virtual rows. */
+export type TransactionRow = Database['public']['Functions']['get_transactions']['Returns'][number];
+
 export interface TransactionInput {
   type: TransactionType;
   amount: number;
@@ -18,35 +21,15 @@ export interface TransactionInput {
   description: string | null;
 }
 
-export interface TransactionFilters {
-  dateFrom: string | null; // YYYY-MM-DD
-  dateTo: string | null; // YYYY-MM-DD
-  type: TransactionType | null;
-  categoryIds: string[] | null;
-  includeDeleted: boolean;
-}
-
-export interface PageOptions {
-  page: number; // 0-indexed
-  pageSize: number;
-}
-
-export interface TransactionsPage {
-  rows: Transaction[];
-  total: number;
-}
-
 /**
  * Load + mutate transactions for the authenticated user.
  *
- * Phase 1 only deals with one-off transactions (no recurrences). When we
- * add recurrences in Phase 2, the listing will switch to using the
- * `get_transactions(start, end)` SQL function instead of querying the
- * table directly, so virtual occurrences come merged in.
+ * Phase 2: listing uses the `get_transactions(start, end)` SQL function so
+ * virtual recurrence occurrences are merged in. Pagination and type/category
+ * filtering are handled client-side (a single month rarely exceeds 100 rows).
  *
- * `defaultAccountId` resolves the user's "Principal" account once on demand
- * so the create dialog can omit the account selector for MVP (wallet UI in
- * Phase 3).
+ * Trash view still queries the table directly (deleted rows are excluded from
+ * the RPC function by design).
  */
 @Injectable({ providedIn: 'root' })
 export class TransactionsService {
@@ -54,7 +37,6 @@ export class TransactionsService {
   private readonly auth = inject(AuthService);
   private readonly categories = inject(CategoriesService);
 
-  /** Indexed lookup so the table can render category data without re-fetching. */
   readonly categoriesById = computed(() => {
     const map = new Map<string, ReturnType<typeof this.categories.all>[number]>();
     for (const c of this.categories.all()) map.set(c.id, c);
@@ -79,28 +61,42 @@ export class TransactionsService {
     return data.id;
   }
 
-  async load(filters: TransactionFilters, page: PageOptions): Promise<TransactionsPage> {
-    let query = this.supabase.client.from('transactions').select('*', { count: 'exact' });
-
-    if (filters.includeDeleted) {
-      query = query.not('deleted_at', 'is', null);
-    } else {
-      query = query.is('deleted_at', null);
-    }
-    if (filters.dateFrom) query = query.gte('transaction_date', filters.dateFrom);
-    if (filters.dateTo) query = query.lte('transaction_date', filters.dateTo);
-    if (filters.type) query = query.eq('type', filters.type);
-    if (filters.categoryIds && filters.categoryIds.length > 0) {
-      query = query.in('category_id', filters.categoryIds);
-    }
-
-    const from = page.page * page.pageSize;
-    const to = from + page.pageSize - 1;
-    query = query.order('transaction_date', { ascending: false }).range(from, to);
-
-    const { data, error, count } = await query;
+  /**
+   * Load all transactions (real + virtual recurrence occurrences) for a date
+   * range using the `get_transactions` RPC. Results are sorted by date desc.
+   */
+  async loadAll(dateFrom: string, dateTo: string): Promise<TransactionRow[]> {
+    const { data, error } = await this.supabase.client.rpc('get_transactions', {
+      p_start: dateFrom,
+      p_end: dateTo,
+    });
     if (error) throw error;
-    return { rows: data ?? [], total: count ?? 0 };
+    return (data ?? []).sort((a, b) => b.transaction_date.localeCompare(a.transaction_date));
+  }
+
+  /** Load only soft-deleted transactions (trash view). */
+  async loadDeleted(dateFrom: string, dateTo: string): Promise<TransactionRow[]> {
+    const { data, error } = await this.supabase.client
+      .from('transactions')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .gte('transaction_date', dateFrom)
+      .lte('transaction_date', dateTo)
+      .order('transaction_date', { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map((tx) => ({
+      id: tx.id,
+      user_id: tx.user_id,
+      type: tx.type,
+      amount: Number(tx.amount),
+      category_id: tx.category_id,
+      account_id: tx.account_id,
+      payment_method: tx.payment_method,
+      transaction_date: tx.transaction_date,
+      description: tx.description ?? '',
+      recurrence_id: tx.recurrence_id ?? '',
+      is_virtual: false,
+    }));
   }
 
   async create(input: TransactionInput): Promise<Transaction> {

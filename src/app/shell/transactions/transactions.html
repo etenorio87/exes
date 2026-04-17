@@ -23,7 +23,7 @@
       <p-datepicker
         inputId="filter-from"
         [ngModel]="dateFrom()"
-        (ngModelChange)="dateFrom.set($event); page.set(0)"
+        (ngModelChange)="dateFrom.set($event)"
         appendTo="body"
         showIcon="true"
         [showButtonBar]="true"
@@ -37,7 +37,7 @@
       <p-datepicker
         inputId="filter-to"
         [ngModel]="dateTo()"
-        (ngModelChange)="dateTo.set($event); page.set(0)"
+        (ngModelChange)="dateTo.set($event)"
         appendTo="body"
         showIcon="true"
         [showButtonBar]="true"
@@ -52,7 +52,7 @@
         inputId="filter-type"
         [options]="typeFilterOptions()"
         [ngModel]="typeFilter()"
-        (ngModelChange)="typeFilter.set($event); page.set(0)"
+        (ngModelChange)="typeFilter.set($event)"
         optionLabel="label"
         optionValue="value"
         appendTo="body"
@@ -67,7 +67,7 @@
         inputId="filter-categories"
         [options]="allCategoryOptions()"
         [ngModel]="categoryFilter()"
-        (ngModelChange)="categoryFilter.set($event); page.set(0)"
+        (ngModelChange)="categoryFilter.set($event)"
         optionLabel="label"
         optionValue="value"
         [filter]="true"
@@ -101,17 +101,13 @@
     </div>
   </div>
 
-  <!-- Table -->
+  <!-- Table (client-side pagination) -->
   <p-table
-    [value]="rows()"
+    [value]="filteredRows()"
     [paginator]="true"
-    [rows]="pageSize()"
-    [first]="page() * pageSize()"
+    [rows]="25"
     [rowsPerPageOptions]="pageSizeOptions"
-    [totalRecords]="total()"
-    [lazy]="true"
     [loading]="loading()"
-    (onPage)="onPage($event)"
     [tableStyle]="{ 'min-width': '50rem' }"
     [rowHover]="true"
     dataKey="id"
@@ -135,7 +131,16 @@
           {{ formatDate(tx.transaction_date) }}
         </td>
         <td class="text-sm">
-          {{ tx.description || '—' }}
+          <span class="inline-flex items-center gap-1">
+            {{ tx.description || '—' }}
+            @if (tx.is_virtual) {
+              <i
+                class="pi pi-sync text-xs text-primary-500"
+                [pTooltip]="'recurrences.indicator' | translate"
+                tooltipPosition="top"
+              ></i>
+            }
+          </span>
         </td>
         <td>
           @if (category(tx.category_id); as cat) {
@@ -198,7 +203,7 @@
     </ng-template>
   </p-table>
 
-  <!-- Create / Edit dialog -->
+  <!-- ─── Create / Edit dialog ──────────────────────────────────────── -->
   <p-dialog
     [visible]="dialogOpen()"
     (visibleChange)="dialogOpen.set($event)"
@@ -318,6 +323,50 @@
           [allowEmpty]="false"
         />
       </div>
+
+      <!-- Recurrence toggle (only for new transactions) -->
+      @if (!editing()) {
+        <div class="flex items-center gap-2">
+          <p-checkbox
+            inputId="tx-recurrent"
+            [ngModel]="isRecurrent()"
+            (ngModelChange)="isRecurrent.set($event)"
+            [ngModelOptions]="{ standalone: true }"
+            [binary]="true"
+          />
+          <label for="tx-recurrent" class="text-sm font-medium">
+            {{ 'recurrences.toggle' | translate }}
+          </label>
+        </div>
+
+        @if (isRecurrent()) {
+          <div class="flex flex-col gap-1">
+            <label for="tx-frequency">{{ 'recurrences.frequency' | translate }}</label>
+            <p-select
+              inputId="tx-frequency"
+              [options]="frequencyOptions()"
+              [ngModel]="frequency()"
+              (ngModelChange)="frequency.set($event)"
+              [ngModelOptions]="{ standalone: true }"
+              optionLabel="label"
+              optionValue="value"
+              appendTo="body"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label for="tx-end-date">{{ 'recurrences.endDate' | translate }}</label>
+            <p-datepicker
+              inputId="tx-end-date"
+              [ngModel]="endDate()"
+              (ngModelChange)="endDate.set($event)"
+              [ngModelOptions]="{ standalone: true }"
+              appendTo="body"
+              showIcon="true"
+            />
+          </div>
+        }
+      }
     </form>
 
     <ng-template #footer>
@@ -334,6 +383,70 @@
         [disabled]="form.invalid"
         (onClick)="save()"
         data-testid="save-transaction"
+      />
+    </ng-template>
+  </p-dialog>
+
+  <!-- ─── Scope dialog (Google Calendar pattern) ────────────────────── -->
+  <p-dialog
+    [visible]="scopeDialogOpen()"
+    (visibleChange)="scopeDialogOpen.set($event)"
+    [header]="
+      (scopeAction() === 'edit'
+        ? 'recurrences.editDialog.title'
+        : 'recurrences.editDialog.deleteTitle'
+      ) | translate
+    "
+    [modal]="true"
+    [closable]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '380px' }"
+  >
+    <div class="flex flex-col gap-3">
+      <label for="scope-one" class="flex items-center gap-2 cursor-pointer">
+        <p-radiobutton
+          inputId="scope-one"
+          name="scope"
+          value="one"
+          [ngModel]="scopeChoice()"
+          (ngModelChange)="scopeChoice.set($event)"
+        />
+        {{ 'recurrences.editDialog.onlyThis' | translate }}
+      </label>
+      <label for="scope-future" class="flex items-center gap-2 cursor-pointer">
+        <p-radiobutton
+          inputId="scope-future"
+          name="scope"
+          value="future"
+          [ngModel]="scopeChoice()"
+          (ngModelChange)="scopeChoice.set($event)"
+        />
+        {{ 'recurrences.editDialog.thisAndFuture' | translate }}
+      </label>
+      <label for="scope-all" class="flex items-center gap-2 cursor-pointer">
+        <p-radiobutton
+          inputId="scope-all"
+          name="scope"
+          value="all"
+          [ngModel]="scopeChoice()"
+          (ngModelChange)="scopeChoice.set($event)"
+        />
+        {{ 'recurrences.editDialog.all' | translate }}
+      </label>
+    </div>
+
+    <ng-template #footer>
+      <p-button
+        [label]="'common.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        (onClick)="closeScopeDialog()"
+      />
+      <p-button
+        [label]="'recurrences.editDialog.continue' | translate"
+        icon="pi pi-arrow-right"
+        (onClick)="confirmScope()"
       />
     </ng-template>
   </p-dialog>

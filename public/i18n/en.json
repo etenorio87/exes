@@ -124,6 +124,26 @@
     "prevMonth": "Previous month",
     "nextMonth": "Next month"
   },
+  "recurrences": {
+    "toggle": "Recurring",
+    "frequency": "Frequency",
+    "endDate": "Until",
+    "frequencies": {
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "semiannual": "Semiannual",
+      "annual": "Annual"
+    },
+    "editDialog": {
+      "title": "Edit recurring transaction",
+      "deleteTitle": "Delete recurring transaction",
+      "onlyThis": "Only this occurrence",
+      "thisAndFuture": "This and future",
+      "all": "All occurrences",
+      "continue": "Continue"
+    },
+    "indicator": "Recurring"
+  },
   "transactions": {
     "title": "Transactions",
     "new": "New transaction",
