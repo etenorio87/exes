@@ -101,6 +101,60 @@ export type Database = {
           },
         ];
       };
+      transfers: {
+        Row: {
+          id: string;
+          user_id: string;
+          from_account_id: string;
+          to_account_id: string;
+          amount: number;
+          transfer_date: string;
+          description: string | null;
+          from_transaction_id: string | null;
+          to_transaction_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          from_account_id: string;
+          to_account_id: string;
+          amount: number;
+          transfer_date?: string;
+          description?: string | null;
+          from_transaction_id?: string | null;
+          to_transaction_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          from_account_id?: string;
+          to_account_id?: string;
+          amount?: number;
+          transfer_date?: string;
+          description?: string | null;
+          from_transaction_id?: string | null;
+          to_transaction_id?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'transfers_from_account_id_fkey';
+            columns: ['from_account_id'];
+            isOneToOne: false;
+            referencedRelation: 'accounts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'transfers_to_account_id_fkey';
+            columns: ['to_account_id'];
+            isOneToOne: false;
+            referencedRelation: 'accounts';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       categories: {
         Row: {
           color: string | null;

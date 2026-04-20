@@ -21,6 +21,15 @@
         (onClick)="openImportDialog()"
         data-testid="import-csv"
       />
+      @if (accountOptions().length > 1) {
+        <p-button
+          [label]="'transactions.transfers.new' | translate"
+          icon="pi pi-arrows-h"
+          severity="secondary"
+          (onClick)="openTransferDialog()"
+          data-testid="new-transfer"
+        />
+      }
       <p-button
         [label]="'transactions.new' | translate"
         icon="pi pi-plus"
@@ -265,6 +274,20 @@
         />
       </div>
 
+      @if (accountOptions().length > 1) {
+        <div class="flex flex-col gap-1">
+          <label for="tx-account">{{ 'transactions.fields.account' | translate }}</label>
+          <p-select
+            inputId="tx-account"
+            formControlName="account_id"
+            [options]="accountOptions()"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+          />
+        </div>
+      }
+
       <div class="flex flex-col gap-1">
         <label for="tx-amount">{{ 'transactions.fields.amount' | translate }}</label>
         <p-inputnumber
@@ -358,20 +381,6 @@
           [allowEmpty]="false"
         />
       </div>
-
-      @if (accountOptions().length > 1) {
-        <div class="flex flex-col gap-1">
-          <label for="tx-account">{{ 'transactions.fields.account' | translate }}</label>
-          <p-select
-            inputId="tx-account"
-            formControlName="account_id"
-            [options]="accountOptions()"
-            optionLabel="label"
-            optionValue="value"
-            appendTo="body"
-          />
-        </div>
-      }
 
       <!-- Recurrence toggle (only for new transactions) -->
       @if (!editing()) {
@@ -587,5 +596,86 @@
         data-testid="confirm-import"
       />
     </ng-template>
+  </p-dialog>
+
+  <!-- Transfer dialog -->
+  <p-dialog
+    [visible]="transferDialogOpen()"
+    (visibleChange)="transferDialogOpen.set($event)"
+    [header]="'transactions.transfers.dialogTitle' | translate"
+    [modal]="true"
+    [style]="{ width: '26rem' }"
+  >
+    <form [formGroup]="transferForm" (ngSubmit)="saveTransfer()" class="flex flex-col gap-4 pt-2">
+      <div class="flex flex-col gap-1">
+        <label for="tf-from">{{ 'transactions.transfers.from' | translate }}</label>
+        <p-select
+          inputId="tf-from"
+          formControlName="from_account_id"
+          [options]="accountOptions()"
+          optionLabel="label"
+          optionValue="value"
+          appendTo="body"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="tf-to">{{ 'transactions.transfers.to' | translate }}</label>
+        <p-select
+          inputId="tf-to"
+          formControlName="to_account_id"
+          [options]="accountOptions()"
+          optionLabel="label"
+          optionValue="value"
+          appendTo="body"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="tf-amount">{{ 'transactions.transfers.amount' | translate }}</label>
+        <input
+          pInputText
+          id="tf-amount"
+          type="number"
+          formControlName="amount"
+          min="0.01"
+          step="0.01"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="tf-date">{{ 'transactions.transfers.date' | translate }}</label>
+        <p-datepicker
+          inputId="tf-date"
+          formControlName="transfer_date"
+          appendTo="body"
+          dateFormat="yy-mm-dd"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="tf-desc">{{ 'transactions.transfers.description' | translate }}</label>
+        <input
+          pInputText
+          id="tf-desc"
+          formControlName="description"
+          [placeholder]="'transactions.fields.descriptionPlaceholder' | translate"
+        />
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <p-button
+          [label]="'common.cancel' | translate"
+          severity="secondary"
+          (onClick)="transferDialogOpen.set(false)"
+        />
+        <p-button
+          [label]="'common.save' | translate"
+          type="submit"
+          [loading]="transferSaving()"
+          [disabled]="transferForm.invalid"
+        />
+      </div>
+    </form>
   </p-dialog>
 </div>

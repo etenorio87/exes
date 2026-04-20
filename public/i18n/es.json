@@ -56,7 +56,8 @@
       "savings": "Ahorros",
       "income": "Ingresos",
       "salary": "Salario",
-      "other_income": "Otros ingresos"
+      "other_income": "Otros ingresos",
+      "transfer": "Transferencia"
     }
   },
   "auth": {
@@ -266,6 +267,23 @@
       "dashboard": {
         "title": "Presupuestos",
         "noBudgets": "Sin presupuestos configurados."
+      }
+    },
+    "transfers": {
+      "title": "Transferencia",
+      "new": "Nueva transferencia",
+      "dialogTitle": "Nueva transferencia",
+      "from": "Cuenta origen",
+      "to": "Cuenta destino",
+      "amount": "Cantidad",
+      "date": "Fecha",
+      "description": "Descripción",
+      "savedToast": "Transferencia realizada.",
+      "deletedToast": "Transferencia eliminada.",
+      "deleteConfirm": "¿Eliminar esta transferencia? Las transacciones vinculadas también se eliminarán.",
+      "sameAccount": "La cuenta origen y destino deben ser diferentes.",
+      "errors": {
+        "generic": "No se pudo completar la transferencia."
       }
     },
     "csv": {
