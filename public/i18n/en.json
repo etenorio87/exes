@@ -144,7 +144,24 @@
       "dark": "Dark"
     },
     "savedToast": "Settings saved.",
-    "save": "Save changes"
+    "save": "Save changes",
+    "accounts": {
+      "title": "Accounts",
+      "new": "New account",
+      "namePlaceholder": "Account name",
+      "default": "Default",
+      "setDefault": "Set as default",
+      "deleteConfirm": "Delete account \"{{name}}\"? Transactions will remain linked to it.",
+      "deletedToast": "Account deleted.",
+      "savedToast": "Account saved.",
+      "cannotDeleteDefault": "Cannot delete the default account.",
+      "cannotDeleteInUse": "Cannot delete: this account has linked transactions.",
+      "errors": {
+        "nameRequired": "Name is required.",
+        "duplicateName": "You already have an account with that name.",
+        "generic": "Could not save the account."
+      }
+    }
   },
   "recurrences": {
     "toggle": "Recurring",
@@ -186,6 +203,7 @@
       "date": "Date",
       "description": "Description",
       "paymentMethod": "Payment method",
+      "account": "Account",
       "descriptionPlaceholder": "Optional"
     },
     "filters": {

@@ -111,8 +111,8 @@
       <label for="filter-search" class="text-xs text-surface-600 dark:text-surface-400">
         {{ 'transactions.filters.search' | translate }}
       </label>
-      <span class="p-input-icon-left w-full">
-        <i class="pi pi-search"></i>
+      <p-iconfield>
+        <p-inputicon styleClass="pi pi-search" />
         <input
           pInputText
           id="filter-search"
@@ -121,7 +121,7 @@
           [placeholder]="'transactions.filters.search' | translate"
           class="w-full"
         />
-      </span>
+      </p-iconfield>
     </div>
 
     <div class="flex items-center gap-2 pb-1">
@@ -358,6 +358,20 @@
           [allowEmpty]="false"
         />
       </div>
+
+      @if (accountOptions().length > 1) {
+        <div class="flex flex-col gap-1">
+          <label for="tx-account">{{ 'transactions.fields.account' | translate }}</label>
+          <p-select
+            inputId="tx-account"
+            formControlName="account_id"
+            [options]="accountOptions()"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+          />
+        </div>
+      }
 
       <!-- Recurrence toggle (only for new transactions) -->
       @if (!editing()) {
