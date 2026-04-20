@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LanguageService } from './core/language.service';
+import { UserPreferencesService } from './core/user-preferences.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,7 @@ import { LanguageService } from './core/language.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  // Eagerly construct LanguageService so its `effect` starts listening to the
-  // auth signal from the moment the app boots.
   private readonly _lang = inject(LanguageService);
+  // Eagerly construct so the theme effect applies .app-dark from boot.
+  private readonly _prefs = inject(UserPreferencesService);
 }

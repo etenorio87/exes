@@ -6,7 +6,12 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { LanguageService, SupportedLang } from '../../core/language.service';
-import { Currency, DateFormat, UserPreferencesService } from '../../core/user-preferences.service';
+import {
+  Currency,
+  DateFormat,
+  Theme,
+  UserPreferencesService,
+} from '../../core/user-preferences.service';
 
 const CURRENCY_OPTIONS: { label: string; value: Currency }[] = [
   { label: '€ EUR', value: 'EUR' },
@@ -17,6 +22,11 @@ const CURRENCY_OPTIONS: { label: string; value: Currency }[] = [
 const DATE_FORMAT_OPTIONS: { label: string; value: DateFormat }[] = [
   { label: 'DD/MM/YYYY', value: 'DD/MM/YYYY' },
   { label: 'MM/DD/YYYY', value: 'MM/DD/YYYY' },
+];
+
+const THEME_OPTIONS: { label: string; value: Theme; icon: string }[] = [
+  { label: '☀ Claro', value: 'light', icon: 'pi pi-sun' },
+  { label: '🌙 Oscuro', value: 'dark', icon: 'pi pi-moon' },
 ];
 
 const LANGUAGE_OPTIONS: { label: string; value: SupportedLang; flag: string }[] = [
@@ -38,10 +48,12 @@ export class Settings {
 
   readonly currencyOptions = CURRENCY_OPTIONS;
   readonly dateFormatOptions = DATE_FORMAT_OPTIONS;
+  readonly themeOptions = THEME_OPTIONS;
   readonly languageOptions = LANGUAGE_OPTIONS;
 
   readonly currency = signal<Currency>(this.prefs.currency());
   readonly dateFormat = signal<DateFormat>(this.prefs.dateFormat());
+  readonly theme = signal<Theme>(this.prefs.theme());
   readonly language = signal<SupportedLang>(this.lang.current() as SupportedLang);
   readonly saving = signal(false);
 
@@ -56,6 +68,7 @@ export class Settings {
     effect(() => {
       this.currency.set(this.prefs.currency());
       this.dateFormat.set(this.prefs.dateFormat());
+      this.theme.set(this.prefs.theme());
       this.language.set(this.lang.current() as SupportedLang);
     });
   }
@@ -68,6 +81,7 @@ export class Settings {
         currency: this.currency(),
         date_format: this.dateFormat(),
       });
+      await this.prefs.setTheme(this.theme());
       await this.lang.setLanguage(this.language());
       this.message.add({
         severity: 'success',

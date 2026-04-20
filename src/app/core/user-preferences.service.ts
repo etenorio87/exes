@@ -5,20 +5,12 @@ import { SupabaseService } from './supabase.service';
 
 export type Currency = 'EUR' | 'USD' | 'GBP';
 export type DateFormat = 'DD/MM/YYYY' | 'MM/DD/YYYY';
+export type Theme = 'light' | 'dark';
 
 const CURRENCY_VALUES: readonly Currency[] = ['EUR', 'USD', 'GBP'];
 const DATE_FORMAT_VALUES: readonly DateFormat[] = ['DD/MM/YYYY', 'MM/DD/YYYY'];
+const THEME_KEY = 'theme';
 
-/**
- * Reads & exposes the user's display preferences from `profiles`:
- *   - currency for amount formatting
- *   - date_format for date display (independent of UI language)
- *
- * Settings UI to mutate these lives in Fase 3; for MVP we only consume them.
- *
- * `formatCurrency` uses the active UI language locale (so 1.234,56 € in es
- * vs €1,234.56 in en) but the currency itself is what the user picked.
- */
 @Injectable({ providedIn: 'root' })
 export class UserPreferencesService {
   private readonly auth = inject(AuthService);
@@ -27,21 +19,48 @@ export class UserPreferencesService {
 
   private readonly _currency = signal<Currency>('EUR');
   private readonly _dateFormat = signal<DateFormat>('DD/MM/YYYY');
+  private readonly _theme = signal<Theme>(this.resolveInitialTheme());
 
   readonly currency = this._currency.asReadonly();
   readonly dateFormat = this._dateFormat.asReadonly();
+  readonly theme = this._theme.asReadonly();
+  readonly isDark = () => this._theme() === 'dark';
 
   constructor() {
+    // Sync preferences from profile on login.
     effect(() => {
       const user = this.auth.user();
       if (user) void this.syncFromProfile(user.id);
     });
+
+    // Apply/remove .app-dark on <html> whenever theme changes.
+    effect(() => {
+      const dark = this._theme() === 'dark';
+      if (typeof document !== 'undefined') {
+        document.documentElement.classList.toggle('app-dark', dark);
+      }
+    });
+  }
+
+  private resolveInitialTheme(): Theme {
+    if (typeof localStorage !== 'undefined') {
+      const stored = localStorage.getItem(THEME_KEY);
+      if (stored === 'dark' || stored === 'light') return stored;
+    }
+    // Respect OS preference
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-color-scheme: dark)').matches
+    ) {
+      return 'dark';
+    }
+    return 'light';
   }
 
   private async syncFromProfile(userId: string): Promise<void> {
     const { data, error } = await this.supabase.client
       .from('profiles')
-      .select('currency, date_format')
+      .select('currency, date_format, theme')
       .eq('id', userId)
       .single();
     if (error || !data) return;
@@ -51,14 +70,22 @@ export class UserPreferencesService {
     if (data.date_format && (DATE_FORMAT_VALUES as readonly string[]).includes(data.date_format)) {
       this._dateFormat.set(data.date_format as DateFormat);
     }
+    if (data.theme === 'dark' || data.theme === 'light') {
+      this._theme.set(data.theme as Theme);
+      if (typeof localStorage !== 'undefined') localStorage.setItem(THEME_KEY, data.theme);
+    }
   }
 
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat(this.lang.current(), {
-      style: 'currency',
-      currency: this._currency(),
-      currencyDisplay: 'narrowSymbol',
-    }).format(amount);
+  async setTheme(theme: Theme): Promise<void> {
+    this._theme.set(theme);
+    if (typeof localStorage !== 'undefined') localStorage.setItem(THEME_KEY, theme);
+    const user = this.auth.user();
+    if (!user) return;
+    await this.supabase.client.from('profiles').update({ theme }).eq('id', user.id);
+  }
+
+  toggleTheme(): void {
+    void this.setTheme(this._theme() === 'dark' ? 'light' : 'dark');
   }
 
   async update(prefs: { currency?: Currency; date_format?: DateFormat }): Promise<void> {
@@ -70,11 +97,14 @@ export class UserPreferencesService {
     if (prefs.date_format) this._dateFormat.set(prefs.date_format);
   }
 
-  /**
-   * Format a `YYYY-MM-DD` date string (Postgres `date` column) or a `Date`
-   * object into the user's preferred `DD/MM/YYYY` or `MM/DD/YYYY` format.
-   * Avoids `new Date(string)` for date-only strings to dodge UTC drift.
-   */
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat(this.lang.current(), {
+      style: 'currency',
+      currency: this._currency(),
+      currencyDisplay: 'narrowSymbol',
+    }).format(amount);
+  }
+
   formatDate(input: string | Date): string {
     let day: string, month: string, year: string;
     if (typeof input === 'string' && /^\d{4}-\d{2}-\d{2}/.test(input)) {

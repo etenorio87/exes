@@ -35,6 +35,20 @@
     </div>
 
     <div class="flex flex-col gap-1">
+      <label for="settings-theme" class="text-sm font-medium">
+        {{ 'settings.theme' | translate }}
+      </label>
+      <p-select
+        inputId="settings-theme"
+        [options]="themeOptions"
+        [ngModel]="theme()"
+        (ngModelChange)="theme.set($event)"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
       <label for="settings-language" class="text-sm font-medium">
         {{ 'settings.language' | translate }}
       </label>

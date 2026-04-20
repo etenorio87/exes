@@ -109,6 +109,8 @@
     "userMenu": {
       "label": "User menu",
       "language": "Language",
+      "darkMode": "Dark mode",
+      "lightMode": "Light mode",
       "signOut": "Sign out"
     }
   },
@@ -135,6 +137,11 @@
     "currency": "Currency",
     "dateFormat": "Date format",
     "language": "Language",
+    "theme": "Theme",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark"
+    },
     "savedToast": "Settings saved.",
     "save": "Save changes"
   },
