@@ -103,6 +103,7 @@
     "nav": {
       "dashboard": "Dashboard",
       "transactions": "Transactions",
+      "budgets": "Budgets",
       "categories": "Categories",
       "settings": "Settings"
     },
@@ -212,6 +213,40 @@
       "categoryRequired": "Pick a category.",
       "dateRequired": "Date is required.",
       "generic": "Could not save the transaction."
+    },
+    "budgets": {
+      "title": "Budgets",
+      "new": "New budget",
+      "editDialogTitle": "Edit budget",
+      "newDialogTitle": "New budget",
+      "empty": "No budgets defined yet. Set a budget for a category to track your spending.",
+      "savedToast": "Budget saved.",
+      "deletedToast": "Budget deleted.",
+      "deleteConfirm": "Delete this budget?",
+      "spent": "spent",
+      "remaining": "remaining",
+      "exceeded": "exceeded",
+      "fields": {
+        "category": "Category",
+        "amount": "Monthly limit",
+        "period": "Period"
+      },
+      "periods": {
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "semiannual": "Semiannual",
+        "annual": "Annual"
+      },
+      "errors": {
+        "categoryRequired": "Pick a category.",
+        "amountInvalid": "Enter an amount greater than 0.",
+        "duplicateCategory": "This category already has a budget.",
+        "generic": "Could not save the budget."
+      },
+      "dashboard": {
+        "title": "Budgets",
+        "noBudgets": "No budgets configured."
+      }
     },
     "csv": {
       "export": "Export CSV",

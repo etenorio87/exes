@@ -63,6 +63,44 @@ export type Database = {
         };
         Relationships: [];
       };
+      budgets: {
+        Row: {
+          amount: number;
+          category_id: string;
+          created_at: string;
+          id: string;
+          period: Database['public']['Enums']['budget_period'];
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          amount: number;
+          category_id: string;
+          created_at?: string;
+          id?: string;
+          period?: Database['public']['Enums']['budget_period'];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          amount?: number;
+          category_id?: string;
+          created_at?: string;
+          id?: string;
+          period?: Database['public']['Enums']['budget_period'];
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'budgets_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       categories: {
         Row: {
           color: string | null;
@@ -355,6 +393,7 @@ export type Database = {
       };
     };
     Enums: {
+      budget_period: 'monthly' | 'quarterly' | 'semiannual' | 'annual';
       category_type: 'income' | 'expense' | 'both';
       payment_method: 'cash' | 'card' | 'transfer';
       recurrence_exception_action: 'deleted' | 'modified';
@@ -488,6 +527,7 @@ export const Constants = {
   },
   public: {
     Enums: {
+      budget_period: ['monthly', 'quarterly', 'semiannual', 'annual'],
       category_type: ['income', 'expense', 'both'],
       payment_method: ['cash', 'card', 'transfer'],
       recurrence_exception_action: ['deleted', 'modified'],

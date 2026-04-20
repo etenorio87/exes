@@ -103,6 +103,7 @@
     "nav": {
       "dashboard": "Panel",
       "transactions": "Transacciones",
+      "budgets": "Presupuestos",
       "categories": "Categorías",
       "settings": "Configuración"
     },
@@ -212,6 +213,40 @@
       "categoryRequired": "Selecciona una categoría.",
       "dateRequired": "La fecha es obligatoria.",
       "generic": "No se pudo guardar la transacción."
+    },
+    "budgets": {
+      "title": "Presupuestos",
+      "new": "Nuevo presupuesto",
+      "editDialogTitle": "Editar presupuesto",
+      "newDialogTitle": "Nuevo presupuesto",
+      "empty": "No hay presupuestos definidos. Asigna un presupuesto a una categoría para controlar tus gastos.",
+      "savedToast": "Presupuesto guardado.",
+      "deletedToast": "Presupuesto eliminado.",
+      "deleteConfirm": "¿Eliminar este presupuesto?",
+      "spent": "gastado",
+      "remaining": "disponible",
+      "exceeded": "excedido",
+      "fields": {
+        "category": "Categoría",
+        "amount": "Límite mensual",
+        "period": "Periodo"
+      },
+      "periods": {
+        "monthly": "Mensual",
+        "quarterly": "Trimestral",
+        "semiannual": "Semestral",
+        "annual": "Anual"
+      },
+      "errors": {
+        "categoryRequired": "Selecciona una categoría.",
+        "amountInvalid": "Introduce una cantidad mayor que 0.",
+        "duplicateCategory": "Esta categoría ya tiene un presupuesto.",
+        "generic": "No se pudo guardar el presupuesto."
+      },
+      "dashboard": {
+        "title": "Presupuestos",
+        "noBudgets": "Sin presupuestos configurados."
+      }
     },
     "csv": {
       "export": "Exportar CSV",

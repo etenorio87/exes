@@ -18,6 +18,10 @@ export const shellRoutes: Routes = [
         loadComponent: () => import('./categories/categories').then((m) => m.Categories),
       },
       {
+        path: 'budgets',
+        loadComponent: () => import('./budgets/budgets').then((m) => m.Budgets),
+      },
+      {
         path: 'settings',
         loadComponent: () => import('./settings/settings').then((m) => m.Settings),
       },

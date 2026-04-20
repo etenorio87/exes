@@ -209,6 +209,49 @@
     </div>
   </div>
 
+  <!-- Budgets progress -->
+  @if (budgetProgress().length > 0) {
+    <div
+      class="bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg p-5"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-surface-900 dark:text-surface-50">
+          {{ 'transactions.budgets.dashboard.title' | translate }}
+        </h2>
+        <a routerLink="/app/budgets" class="text-sm text-primary-600 hover:underline">
+          {{ 'shell.nav.budgets' | translate }} →
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @for (bp of budgetProgress(); track bp.categoryId) {
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between text-sm">
+              <span class="flex items-center gap-2">
+                <i
+                  [class]="'pi ' + categoryIcon(bp.categoryId) + ' text-xs'"
+                  [style.color]="categoryColor(bp.categoryId)"
+                ></i>
+                <span class="font-medium text-surface-900 dark:text-surface-50">
+                  {{ categoryName(bp.categoryId) }}
+                </span>
+              </span>
+              <span class="text-muted-color">
+                {{ formatCurrency(bp.spent) }} / {{ formatCurrency(bp.amount) }}
+              </span>
+            </div>
+            <div class="h-2 w-full overflow-hidden rounded-full bg-surface-100 dark:bg-surface-800">
+              <div
+                class="h-full rounded-full transition-all"
+                [style.width.%]="Math.min(bp.percentage, 100)"
+                [class]="budgetProgressColor(bp.percentage)"
+              ></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
   <!-- Recent transactions (full width) -->
   <div
     class="bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg p-5"
