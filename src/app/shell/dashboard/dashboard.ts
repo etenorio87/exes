@@ -13,11 +13,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
 import { DatePickerModule } from 'primeng/datepicker';
+import { AccountsService } from '../../core/accounts.service';
 import { AuthService } from '../../core/auth.service';
 import { BudgetsService, BudgetPeriod } from '../../core/budgets.service';
 import { CategoriesService } from '../../core/categories.service';
 import { DashboardData, DashboardService } from '../../core/dashboard.service';
 import { LanguageService } from '../../core/language.service';
+import { SupabaseService } from '../../core/supabase.service';
 import { TransactionType } from '../../core/transactions.service';
 import { UserPreferencesService } from '../../core/user-preferences.service';
 
@@ -27,6 +29,14 @@ export interface BudgetProgress {
   spent: number;
   percentage: number;
   period: BudgetPeriod;
+}
+
+export interface AccountBalance {
+  accountId: string;
+  name: string;
+  income: number;
+  expenses: number;
+  balance: number;
 }
 
 @Component({
@@ -39,6 +49,8 @@ export class Dashboard {
   private readonly auth = inject(AuthService);
   private readonly dashboardService = inject(DashboardService);
   private readonly budgetsService = inject(BudgetsService);
+  private readonly accountsService = inject(AccountsService);
+  private readonly supabase = inject(SupabaseService);
   private readonly categories = inject(CategoriesService);
   private readonly prefs = inject(UserPreferencesService);
   private readonly lang = inject(LanguageService);
@@ -72,6 +84,10 @@ export class Dashboard {
   });
 
   readonly budgetProgress = signal<BudgetProgress[]>([]);
+  readonly accountBalances = signal<AccountBalance[]>([]);
+  readonly totalBalance = computed(() =>
+    this.accountBalances().reduce((sum, ab) => sum + ab.balance, 0),
+  );
 
   readonly evolutionData = signal<object | null>(null);
   readonly evolutionOptions = signal<object>({
@@ -120,9 +136,37 @@ export class Dashboard {
       this.buildDoughnut(result);
       this.buildEvolution(result);
       this.buildBudgetProgress(result);
+      await this.loadAccountBalances(month);
     } finally {
       this.loading.set(false);
     }
+  }
+
+  private async loadAccountBalances(month: Date): Promise<void> {
+    // End of selected month
+    const endOfMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+    const endStr = `${endOfMonth.getFullYear()}-${String(endOfMonth.getMonth() + 1).padStart(2, '0')}-${String(endOfMonth.getDate()).padStart(2, '0')}`;
+
+    const { data, error } = await this.supabase.client.rpc('get_accumulated_balances', {
+      p_end: endStr,
+    });
+    if (error || !data) {
+      this.accountBalances.set([]);
+      return;
+    }
+
+    const accounts = this.accountsService.all();
+    const balances: AccountBalance[] = data.map((row) => {
+      const account = accounts.find((a) => a.id === row.account_id);
+      return {
+        accountId: row.account_id,
+        name: account?.name ?? '?',
+        income: Number(row.income),
+        expenses: Number(row.expenses),
+        balance: Number(row.balance),
+      };
+    });
+    this.accountBalances.set(balances);
   }
 
   private buildBudgetProgress(d: DashboardData): void {
