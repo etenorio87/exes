@@ -212,6 +212,19 @@
       "categoryRequired": "Pick a category.",
       "dateRequired": "Date is required.",
       "generic": "Could not save the transaction."
+    },
+    "csv": {
+      "export": "Export CSV",
+      "import": "Import CSV",
+      "importTitle": "Import transactions from CSV",
+      "selectFile": "Select file",
+      "preview": "Preview",
+      "validRows": "{{count}} valid rows",
+      "errorRows": "{{count}} with errors",
+      "confirmImport": "Import {{count}} transactions",
+      "importedToast": "{{count}} transactions imported.",
+      "noValidRows": "No valid rows to import.",
+      "formatHint": "Format: date,type,amount,category,description,payment_method"
     }
   }
 }

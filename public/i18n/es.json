@@ -212,6 +212,19 @@
       "categoryRequired": "Selecciona una categoría.",
       "dateRequired": "La fecha es obligatoria.",
       "generic": "No se pudo guardar la transacción."
+    },
+    "csv": {
+      "export": "Exportar CSV",
+      "import": "Importar CSV",
+      "importTitle": "Importar transacciones desde CSV",
+      "selectFile": "Seleccionar archivo",
+      "preview": "Vista previa",
+      "validRows": "{{count}} filas válidas",
+      "errorRows": "{{count}} con errores",
+      "confirmImport": "Importar {{count}} transacciones",
+      "importedToast": "{{count}} transacciones importadas.",
+      "noValidRows": "No hay filas válidas para importar.",
+      "formatHint": "Formato: date,type,amount,category,description,payment_method"
     }
   }
 }

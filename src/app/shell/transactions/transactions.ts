@@ -26,6 +26,7 @@ import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
 import { CategoriesService } from '../../core/categories.service';
+import { CsvImportRow, CsvService } from '../../core/csv.service';
 import { LanguageService } from '../../core/language.service';
 import { RecurrenceFrequency, RecurrencesService } from '../../core/recurrences.service';
 import {
@@ -91,6 +92,7 @@ export class Transactions {
   private readonly prefs = inject(UserPreferencesService);
   private readonly translate = inject(TranslateService);
   private readonly lang = inject(LanguageService);
+  private readonly csv = inject(CsvService);
   private readonly confirm = inject(ConfirmationService);
   private readonly message = inject(MessageService);
 
@@ -524,5 +526,74 @@ export class Transactions {
       }
     }
     this.scopeRow = null;
+  }
+
+  // ─── CSV Import/Export ────────────────────────────────────────────────
+  readonly importDialogOpen = signal(false);
+  readonly importRows = signal<CsvImportRow[]>([]);
+  readonly importing = signal(false);
+
+  readonly importValid = () => this.importRows().filter((r) => !r.error);
+  readonly importErrors = () => this.importRows().filter((r) => !!r.error);
+
+  exportCsv(): void {
+    const rows = this.filteredRows();
+    if (rows.length === 0) return;
+    const content = this.csv.exportToCsv(rows, (id) => this.categoryName(id));
+    const d = this.dateFrom();
+    const label = d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` : 'all';
+    this.csv.downloadCsv(content, `exes-transacciones-${label}.csv`);
+  }
+
+  openImportDialog(): void {
+    this.importRows.set([]);
+    this.importDialogOpen.set(true);
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = reader.result as string;
+      this.importRows.set(this.csv.parseImport(text));
+    };
+    reader.readAsText(file);
+  }
+
+  async confirmImport(): Promise<void> {
+    const valid = this.importValid();
+    if (valid.length === 0) return;
+    this.importing.set(true);
+    try {
+      const accountId = await this.txService.getDefaultAccountId();
+      for (const row of valid) {
+        await this.txService.create({
+          type: row.type,
+          amount: row.amount,
+          category_id: row.categoryId!,
+          account_id: accountId,
+          payment_method: row.paymentMethod,
+          transaction_date: row.date,
+          description: row.description || null,
+        });
+      }
+      this.message.add({
+        severity: 'success',
+        summary: this.translate.instant('transactions.csv.importedToast', {
+          count: valid.length,
+        }),
+      });
+      this.importDialogOpen.set(false);
+      await this.fetch();
+    } catch {
+      this.message.add({
+        severity: 'error',
+        summary: this.translate.instant('transactions.errors.generic'),
+      });
+    } finally {
+      this.importing.set(false);
+    }
   }
 }
