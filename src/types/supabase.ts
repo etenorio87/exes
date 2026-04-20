@@ -359,6 +359,15 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      get_accumulated_balances: {
+        Args: { p_end: string };
+        Returns: {
+          account_id: string;
+          income: number;
+          expenses: number;
+          balance: number;
+        }[];
+      };
       expand_recurrences: {
         Args: { p_end: string; p_start: string };
         Returns: {

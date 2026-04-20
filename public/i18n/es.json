@@ -131,7 +131,9 @@
     "evolution": "Evolución (12 meses)",
     "noEvolutionData": "Sin datos suficientes para el gráfico.",
     "topCategories": "Top 5 categorías",
-    "noTopCategories": "Sin gastos por categoría este mes."
+    "noTopCategories": "Sin gastos por categoría este mes.",
+    "accumulatedBalance": "Saldo acumulado",
+    "totalBalance": "Total"
   },
   "settings": {
     "title": "Configuración",
