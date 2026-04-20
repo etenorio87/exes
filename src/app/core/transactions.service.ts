@@ -96,6 +96,7 @@ export class TransactionsService {
       description: tx.description ?? '',
       recurrence_id: tx.recurrence_id ?? '',
       is_virtual: false,
+      receipt_url: tx.receipt_url ?? null,
     }));
   }
 
