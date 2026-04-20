@@ -57,6 +57,7 @@ export class UserPreferencesService {
     return new Intl.NumberFormat(this.lang.current(), {
       style: 'currency',
       currency: this._currency(),
+      currencyDisplay: 'narrowSymbol',
     }).format(amount);
   }
 
