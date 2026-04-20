@@ -9,6 +9,7 @@ import { MenuModule } from 'primeng/menu';
 import { ToastModule } from 'primeng/toast';
 import { AuthService } from '../../core/auth.service';
 import { LanguageService, SupportedLang } from '../../core/language.service';
+import { UserPreferencesService } from '../../core/user-preferences.service';
 
 interface NavItem {
   path: string;
@@ -43,6 +44,7 @@ export class AppLayout {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly lang = inject(LanguageService);
+  private readonly prefs = inject(UserPreferencesService);
   private readonly translate = inject(TranslateService);
 
   readonly user = this.auth.user;
@@ -83,6 +85,14 @@ export class AppLayout {
             label: langItem('en', 'English'),
             escape: false,
             command: () => void this.lang.setLanguage('en'),
+          },
+          { separator: true },
+          {
+            label: this.prefs.isDark()
+              ? t('shell.userMenu.lightMode')
+              : t('shell.userMenu.darkMode'),
+            icon: this.prefs.isDark() ? 'pi pi-sun' : 'pi pi-moon',
+            command: () => this.prefs.toggleTheme(),
           },
           { separator: true },
           {

@@ -109,6 +109,8 @@
     "userMenu": {
       "label": "Menú de usuario",
       "language": "Idioma",
+      "darkMode": "Modo oscuro",
+      "lightMode": "Modo claro",
       "signOut": "Cerrar sesión"
     }
   },
@@ -135,6 +137,11 @@
     "currency": "Moneda",
     "dateFormat": "Formato de fecha",
     "language": "Idioma",
+    "theme": "Tema",
+    "themes": {
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
     "savedToast": "Configuración guardada.",
     "save": "Guardar cambios"
   },
