@@ -148,6 +148,20 @@
     },
     "savedToast": "Configuración guardada.",
     "save": "Guardar cambios",
+    "data": {
+      "title": "Tus datos",
+      "exportTitle": "Exportar datos",
+      "exportDescription": "Descarga un archivo JSON con todas tus transacciones, categorías, cuentas, presupuestos y transferencias.",
+      "exportButton": "Descargar backup",
+      "exportedToast": "Backup descargado.",
+      "deleteTitle": "Eliminar cuenta",
+      "deleteDescription": "Elimina permanentemente tu cuenta y todos los datos asociados. Esta acción no se puede deshacer.",
+      "deleteButton": "Eliminar mi cuenta",
+      "deleteConfirm": "¿Estás seguro? Escribe ELIMINAR para confirmar.",
+      "deleteInput": "Escribe ELIMINAR",
+      "deletedToast": "Cuenta eliminada. Adiós.",
+      "deleteError": "No se pudo eliminar la cuenta. Inténtalo más tarde."
+    },
     "accounts": {
       "title": "Cuentas",
       "new": "Nueva cuenta",

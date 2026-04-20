@@ -1,14 +1,18 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { Account, AccountsService } from '../../core/accounts.service';
+import { AuthService } from '../../core/auth.service';
 import { LanguageService, SupportedLang } from '../../core/language.service';
+import { SupabaseService } from '../../core/supabase.service';
 import {
   Currency,
   DateFormat,
@@ -43,6 +47,7 @@ const LANGUAGE_OPTIONS: { label: string; value: SupportedLang; flag: string }[] 
     FormsModule,
     TranslateModule,
     ButtonModule,
+    DialogModule,
     InputTextModule,
     SelectModule,
     TooltipModule,
@@ -56,6 +61,9 @@ export class Settings {
   private readonly translate = inject(TranslateService);
   private readonly message = inject(MessageService);
   private readonly confirm = inject(ConfirmationService);
+  private readonly auth = inject(AuthService);
+  private readonly supabase = inject(SupabaseService);
+  private readonly router = inject(Router);
   readonly accounts = inject(AccountsService);
 
   readonly currencyOptions = CURRENCY_OPTIONS;
@@ -214,6 +222,85 @@ export class Settings {
           ? this.translate.instant('settings.accounts.cannotDeleteInUse')
           : this.translate.instant('settings.accounts.errors.generic');
       this.message.add({ severity: 'error', summary: detail, life: 6000 });
+    }
+  }
+
+  // ─── Data export & account deletion (GDPR) ─────────────────────────────
+  readonly exporting = signal(false);
+  readonly deleteDialogOpen = signal(false);
+  readonly deleteConfirmText = signal('');
+  readonly deleting = signal(false);
+
+  /** Confirmation keyword depends on language */
+  get deleteKeyword(): string {
+    return this.lang.current() === 'es' ? 'ELIMINAR' : 'DELETE';
+  }
+
+  async exportData(): Promise<void> {
+    if (this.exporting()) return;
+    this.exporting.set(true);
+    try {
+      const client = this.supabase.client;
+      const [categories, accounts, transactions, budgets, transfers] = await Promise.all([
+        client.from('categories').select('*').not('user_id', 'is', null),
+        client.from('accounts').select('*'),
+        client.from('transactions').select('*'),
+        client.from('budgets').select('*'),
+        client.from('transfers').select('*'),
+      ]);
+
+      const backup = {
+        exported_at: new Date().toISOString(),
+        categories: categories.data ?? [],
+        accounts: accounts.data ?? [],
+        transactions: transactions.data ?? [],
+        budgets: budgets.data ?? [],
+        transfers: transfers.data ?? [],
+      };
+
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `exes-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      this.message.add({
+        severity: 'success',
+        summary: this.translate.instant('settings.data.exportedToast'),
+      });
+    } finally {
+      this.exporting.set(false);
+    }
+  }
+
+  openDeleteDialog(): void {
+    this.deleteConfirmText.set('');
+    this.deleteDialogOpen.set(true);
+  }
+
+  async confirmDeleteUserAccount(): Promise<void> {
+    if (this.deleteConfirmText().toUpperCase() !== this.deleteKeyword) return;
+    this.deleting.set(true);
+    try {
+      const { error } = await this.supabase.client.rpc('delete_user_account');
+      if (error) throw error;
+      this.message.add({
+        severity: 'success',
+        summary: this.translate.instant('settings.data.deletedToast'),
+      });
+      await this.auth.signOut();
+      void this.router.navigate(['/auth/login']);
+    } catch {
+      this.message.add({
+        severity: 'error',
+        summary: this.translate.instant('settings.data.deleteError'),
+        life: 6000,
+      });
+    } finally {
+      this.deleting.set(false);
+      this.deleteDialogOpen.set(false);
     }
   }
 }

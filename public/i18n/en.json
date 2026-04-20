@@ -148,6 +148,20 @@
     },
     "savedToast": "Settings saved.",
     "save": "Save changes",
+    "data": {
+      "title": "Your data",
+      "exportTitle": "Export data",
+      "exportDescription": "Download a JSON file with all your transactions, categories, accounts, budgets and transfers.",
+      "exportButton": "Download backup",
+      "exportedToast": "Backup downloaded.",
+      "deleteTitle": "Delete account",
+      "deleteDescription": "Permanently delete your account and all associated data. This action cannot be undone.",
+      "deleteButton": "Delete my account",
+      "deleteConfirm": "Are you sure? Type DELETE to confirm.",
+      "deleteInput": "Type DELETE",
+      "deletedToast": "Account deleted. Goodbye.",
+      "deleteError": "Could not delete the account. Try again later."
+    },
     "accounts": {
       "title": "Accounts",
       "new": "New account",
