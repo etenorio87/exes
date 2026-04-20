@@ -2,9 +2,12 @@ import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@ang
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
+import { Account, AccountsService } from '../../core/accounts.service';
 import { LanguageService, SupportedLang } from '../../core/language.service';
 import {
   Currency,
@@ -36,7 +39,14 @@ const LANGUAGE_OPTIONS: { label: string; value: SupportedLang; flag: string }[] 
 
 @Component({
   selector: 'app-settings',
-  imports: [FormsModule, TranslateModule, ButtonModule, SelectModule],
+  imports: [
+    FormsModule,
+    TranslateModule,
+    ButtonModule,
+    InputTextModule,
+    SelectModule,
+    TooltipModule,
+  ],
   templateUrl: './settings.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -45,6 +55,8 @@ export class Settings {
   private readonly lang = inject(LanguageService);
   private readonly translate = inject(TranslateService);
   private readonly message = inject(MessageService);
+  private readonly confirm = inject(ConfirmationService);
+  readonly accounts = inject(AccountsService);
 
   readonly currencyOptions = CURRENCY_OPTIONS;
   readonly dateFormatOptions = DATE_FORMAT_OPTIONS;
@@ -94,6 +106,114 @@ export class Settings {
       });
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  // ─── Accounts ──────────────────────────────────────────────────────────
+  readonly newAccountName = signal('');
+  readonly accountSaving = signal(false);
+  readonly editingAccount = signal<Account | null>(null);
+  readonly editAccountName = signal('');
+
+  async addAccount(): Promise<void> {
+    const name = this.newAccountName().trim();
+    if (!name || this.accountSaving()) return;
+    this.accountSaving.set(true);
+    try {
+      await this.accounts.create({ name });
+      this.newAccountName.set('');
+      this.message.add({
+        severity: 'success',
+        summary: this.translate.instant('settings.accounts.savedToast'),
+      });
+    } catch (err) {
+      const code = (err as { code?: string } | null)?.code;
+      const detail =
+        code === '23505'
+          ? this.translate.instant('settings.accounts.errors.duplicateName')
+          : this.translate.instant('settings.accounts.errors.generic');
+      this.message.add({ severity: 'error', summary: detail, life: 6000 });
+    } finally {
+      this.accountSaving.set(false);
+    }
+  }
+
+  startRename(account: Account): void {
+    this.editingAccount.set(account);
+    this.editAccountName.set(account.name);
+  }
+
+  cancelRename(): void {
+    this.editingAccount.set(null);
+  }
+
+  async saveRename(): Promise<void> {
+    const account = this.editingAccount();
+    const name = this.editAccountName().trim();
+    if (!account || !name) return;
+    try {
+      await this.accounts.rename(account.id, name);
+      this.editingAccount.set(null);
+      this.message.add({
+        severity: 'success',
+        summary: this.translate.instant('settings.accounts.savedToast'),
+      });
+    } catch (err) {
+      const code = (err as { code?: string } | null)?.code;
+      const detail =
+        code === '23505'
+          ? this.translate.instant('settings.accounts.errors.duplicateName')
+          : this.translate.instant('settings.accounts.errors.generic');
+      this.message.add({ severity: 'error', summary: detail, life: 6000 });
+    }
+  }
+
+  async makeDefault(account: Account): Promise<void> {
+    try {
+      await this.accounts.setDefault(account.id);
+    } catch {
+      this.message.add({
+        severity: 'error',
+        summary: this.translate.instant('settings.accounts.errors.generic'),
+        life: 6000,
+      });
+    }
+  }
+
+  confirmDeleteAccount(account: Account): void {
+    if (account.is_default) {
+      this.message.add({
+        severity: 'warn',
+        summary: this.translate.instant('settings.accounts.cannotDeleteDefault'),
+        life: 4000,
+      });
+      return;
+    }
+    this.confirm.confirm({
+      message: this.translate.instant('settings.accounts.deleteConfirm', { name: account.name }),
+      header: this.translate.instant('common.confirm'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.translate.instant('common.delete'),
+      rejectLabel: this.translate.instant('common.cancel'),
+      acceptButtonProps: { severity: 'danger' },
+      accept: () => void this.doDeleteAccount(account),
+    });
+  }
+
+  private async doDeleteAccount(account: Account): Promise<void> {
+    try {
+      await this.accounts.softDelete(account.id);
+      this.message.add({
+        severity: 'success',
+        summary: this.translate.instant('settings.accounts.deletedToast'),
+      });
+    } catch (err) {
+      const code = (err as { code?: string } | null)?.code;
+      const detail =
+        code === '23503'
+          ? this.translate.instant('settings.accounts.cannotDeleteInUse')
+          : this.translate.instant('settings.accounts.errors.generic');
+      this.message.add({ severity: 'error', summary: detail, life: 6000 });
     }
   }
 }

@@ -144,7 +144,24 @@
       "dark": "Oscuro"
     },
     "savedToast": "Configuración guardada.",
-    "save": "Guardar cambios"
+    "save": "Guardar cambios",
+    "accounts": {
+      "title": "Cuentas",
+      "new": "Nueva cuenta",
+      "namePlaceholder": "Nombre de la cuenta",
+      "default": "Predeterminada",
+      "setDefault": "Establecer como predeterminada",
+      "deleteConfirm": "¿Eliminar la cuenta \"{{name}}\"? Las transacciones seguirán vinculadas.",
+      "deletedToast": "Cuenta eliminada.",
+      "savedToast": "Cuenta guardada.",
+      "cannotDeleteDefault": "No se puede eliminar la cuenta predeterminada.",
+      "cannotDeleteInUse": "No se puede eliminar: esta cuenta tiene transacciones asociadas.",
+      "errors": {
+        "nameRequired": "El nombre es obligatorio.",
+        "duplicateName": "Ya tienes una cuenta con ese nombre.",
+        "generic": "No se pudo guardar la cuenta."
+      }
+    }
   },
   "recurrences": {
     "toggle": "Recurrente",
@@ -186,6 +203,7 @@
       "date": "Fecha",
       "description": "Descripción",
       "paymentMethod": "Método de pago",
+      "account": "Cuenta",
       "descriptionPlaceholder": "Opcional"
     },
     "filters": {

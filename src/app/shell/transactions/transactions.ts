@@ -15,6 +15,8 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -25,6 +27,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { TooltipModule } from 'primeng/tooltip';
+import { AccountsService } from '../../core/accounts.service';
 import { CategoriesService } from '../../core/categories.service';
 import { CsvImportRow, CsvService } from '../../core/csv.service';
 import { LanguageService } from '../../core/language.service';
@@ -70,6 +73,8 @@ type ScopeChoice = 'one' | 'future' | 'all';
     CheckboxModule,
     DatePickerModule,
     DialogModule,
+    IconFieldModule,
+    InputIconModule,
     InputNumberModule,
     InputTextModule,
     MultiSelectModule,
@@ -92,6 +97,7 @@ export class Transactions {
   private readonly prefs = inject(UserPreferencesService);
   private readonly translate = inject(TranslateService);
   private readonly lang = inject(LanguageService);
+  private readonly accountsService = inject(AccountsService);
   private readonly csv = inject(CsvService);
   private readonly confirm = inject(ConfirmationService);
   private readonly message = inject(MessageService);
@@ -183,12 +189,12 @@ export class Transactions {
   readonly dialogOpen = signal(false);
   readonly editing = signal<TransactionRow | null>(null);
   readonly saving = signal(false);
-  private dialogAccountId: string | null = null;
 
   readonly form = this.fb.nonNullable.group({
     type: ['expense' as TransactionType, [Validators.required]],
     amount: [0, [Validators.required, Validators.min(0.01)]],
     category_id: ['', [Validators.required]],
+    account_id: ['', [Validators.required]],
     transaction_date: [new Date(), [Validators.required]],
     description: [''],
     payment_method: ['card' as PaymentMethod, [Validators.required]],
@@ -215,6 +221,13 @@ export class Transactions {
         icon: c.icon ?? 'pi-tag',
       }));
   });
+
+  readonly accountOptions = computed(() =>
+    this.accountsService.all().map((a) => ({
+      label: a.name,
+      value: a.id,
+    })),
+  );
 
   // ─── Scope dialog (Google Calendar pattern) ──────────────────────────
   readonly scopeDialogOpen = signal(false);
@@ -292,7 +305,7 @@ export class Transactions {
 
   // ─── CRUD ─────────────────────────────────────────────────────────────
   async openCreate(): Promise<void> {
-    this.dialogAccountId = await this.txService.getDefaultAccountId();
+    const defaultAccountId = await this.txService.getDefaultAccountId();
     this.editing.set(null);
     this.isRecurrent.set(false);
     this.frequency.set('monthly');
@@ -302,6 +315,7 @@ export class Transactions {
       type: 'expense',
       amount: 0,
       category_id: '',
+      account_id: defaultAccountId,
       transaction_date: new Date(),
       description: '',
       payment_method: 'card',
@@ -310,13 +324,13 @@ export class Transactions {
   }
 
   openEditDirect(tx: TransactionRow): void {
-    this.dialogAccountId = tx.account_id;
     this.editing.set(tx);
     this.isRecurrent.set(false); // hide recurrence fields in edit mode
     this.form.reset({
       type: tx.type,
       amount: Number(tx.amount),
       category_id: tx.category_id,
+      account_id: tx.account_id,
       transaction_date: new Date(tx.transaction_date),
       description: tx.description ?? '',
       payment_method: tx.payment_method,
@@ -342,7 +356,6 @@ export class Transactions {
 
   async save(): Promise<void> {
     if (this.form.invalid || this.saving()) return;
-    if (!this.dialogAccountId) return;
     this.saving.set(true);
     const v = this.form.getRawValue();
     const txDate = dateOnly(v.transaction_date)!;
@@ -355,7 +368,7 @@ export class Transactions {
           type: v.type as TransactionType,
           amount: v.amount,
           category_id: v.category_id,
-          account_id: this.dialogAccountId,
+          account_id: v.account_id,
           payment_method: v.payment_method as PaymentMethod,
           description: v.description.trim() || null,
           frequency: this.frequency(),
@@ -368,7 +381,7 @@ export class Transactions {
           type: v.type as TransactionType,
           amount: v.amount,
           category_id: v.category_id,
-          account_id: this.dialogAccountId,
+          account_id: v.account_id,
           payment_method: v.payment_method as PaymentMethod,
           transaction_date: txDate,
           description: v.description.trim() || null,
@@ -406,7 +419,7 @@ export class Transactions {
           type: v.type as TransactionType,
           amount: v.amount,
           category_id: v.category_id,
-          account_id: this.dialogAccountId,
+          account_id: v.account_id,
           payment_method: v.payment_method as PaymentMethod,
           transaction_date: txDate,
           description: v.description.trim() || null,
