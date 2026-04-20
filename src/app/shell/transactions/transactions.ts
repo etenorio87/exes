@@ -102,6 +102,7 @@ export class Transactions {
   readonly dateTo = signal<Date | null>(endOfMonth());
   readonly typeFilter = signal<TransactionType | null>(null);
   readonly categoryFilter = signal<string[]>([]);
+  readonly searchQuery = signal('');
   readonly includeDeleted = signal(false);
 
   // ─── Data (client-side pagination) ───────────────────────────────────
@@ -113,8 +114,10 @@ export class Transactions {
     let rows = this.allRows();
     const t = this.typeFilter();
     const cats = this.categoryFilter();
+    const q = this.searchQuery().toLowerCase().trim();
     if (t) rows = rows.filter((r) => r.type === t);
     if (cats.length) rows = rows.filter((r) => cats.includes(r.category_id));
+    if (q) rows = rows.filter((r) => (r.description ?? '').toLowerCase().includes(q));
     return rows;
   });
 

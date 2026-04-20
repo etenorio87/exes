@@ -175,7 +175,8 @@
       "from": "Desde",
       "to": "Hasta",
       "type": "Tipo",
-      "categories": "Categorías"
+      "categories": "Categorías",
+      "search": "Buscar por descripción"
     },
     "paymentMethods": {
       "cash": "Efectivo",

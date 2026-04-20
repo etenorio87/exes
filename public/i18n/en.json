@@ -175,7 +175,8 @@
       "from": "From",
       "to": "To",
       "type": "Type",
-      "categories": "Categories"
+      "categories": "Categories",
+      "search": "Search by description"
     },
     "paymentMethods": {
       "cash": "Cash",
