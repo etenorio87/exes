@@ -60,6 +60,15 @@ export class UserPreferencesService {
     }).format(amount);
   }
 
+  async update(prefs: { currency?: Currency; date_format?: DateFormat }): Promise<void> {
+    const user = this.auth.user();
+    if (!user) return;
+    const { error } = await this.supabase.client.from('profiles').update(prefs).eq('id', user.id);
+    if (error) throw error;
+    if (prefs.currency) this._currency.set(prefs.currency);
+    if (prefs.date_format) this._dateFormat.set(prefs.date_format);
+  }
+
   /**
    * Format a `YYYY-MM-DD` date string (Postgres `date` column) or a `Date`
    * object into the user's preferred `DD/MM/YYYY` or `MM/DD/YYYY` format.

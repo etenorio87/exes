@@ -103,7 +103,8 @@
     "nav": {
       "dashboard": "Dashboard",
       "transactions": "Transactions",
-      "categories": "Categories"
+      "categories": "Categories",
+      "settings": "Settings"
     },
     "userMenu": {
       "label": "User menu",
@@ -128,6 +129,14 @@
     "noEvolutionData": "Not enough data for the chart.",
     "topCategories": "Top 5 categories",
     "noTopCategories": "No expenses by category this month."
+  },
+  "settings": {
+    "title": "Settings",
+    "currency": "Currency",
+    "dateFormat": "Date format",
+    "language": "Language",
+    "savedToast": "Settings saved.",
+    "save": "Save changes"
   },
   "recurrences": {
     "toggle": "Recurring",

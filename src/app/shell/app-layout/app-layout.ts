@@ -20,6 +20,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { path: '/app/dashboard', icon: 'pi pi-chart-line', labelKey: 'shell.nav.dashboard' },
   { path: '/app/transactions', icon: 'pi pi-list', labelKey: 'shell.nav.transactions' },
   { path: '/app/categories', icon: 'pi pi-tag', labelKey: 'shell.nav.categories' },
+  { path: '/app/settings', icon: 'pi pi-cog', labelKey: 'shell.nav.settings' },
 ];
 
 @Component({
