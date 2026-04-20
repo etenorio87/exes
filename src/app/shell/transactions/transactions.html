@@ -4,12 +4,30 @@
     <h1 class="text-2xl font-bold text-surface-900 dark:text-surface-50">
       {{ 'transactions.title' | translate }}
     </h1>
-    <p-button
-      [label]="'transactions.new' | translate"
-      icon="pi pi-plus"
-      (onClick)="openCreate()"
-      data-testid="new-transaction"
-    />
+    <div class="flex items-center gap-2">
+      <p-button
+        [label]="'transactions.csv.export' | translate"
+        icon="pi pi-download"
+        severity="secondary"
+        [text]="true"
+        (onClick)="exportCsv()"
+        data-testid="export-csv"
+      />
+      <p-button
+        [label]="'transactions.csv.import' | translate"
+        icon="pi pi-upload"
+        severity="secondary"
+        [text]="true"
+        (onClick)="openImportDialog()"
+        data-testid="import-csv"
+      />
+      <p-button
+        [label]="'transactions.new' | translate"
+        icon="pi pi-plus"
+        (onClick)="openCreate()"
+        data-testid="new-transaction"
+      />
+    </div>
   </div>
 
   <!-- Filters -->
@@ -464,6 +482,95 @@
         [label]="'recurrences.editDialog.continue' | translate"
         icon="pi pi-arrow-right"
         (onClick)="confirmScope()"
+      />
+    </ng-template>
+  </p-dialog>
+
+  <!-- ─── CSV Import dialog ─────────────────────────────────────────── -->
+  <p-dialog
+    [visible]="importDialogOpen()"
+    (visibleChange)="importDialogOpen.set($event)"
+    [header]="'transactions.csv.importTitle' | translate"
+    [modal]="true"
+    [closable]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '600px' }"
+    [breakpoints]="{ '768px': '95vw' }"
+  >
+    <div class="flex flex-col gap-4">
+      <p class="text-sm text-surface-500">
+        {{ 'transactions.csv.formatHint' | translate }}
+      </p>
+
+      <input
+        type="file"
+        accept=".csv"
+        (change)="onFileSelected($event)"
+        class="block w-full text-sm text-surface-700 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-primary-600 file:text-white file:cursor-pointer"
+      />
+
+      @if (importRows().length > 0) {
+        <div class="flex gap-4 text-sm">
+          <span class="text-emerald-600 font-semibold">
+            {{ 'transactions.csv.validRows' | translate: { count: importValid().length } }}
+          </span>
+          @if (importErrors().length > 0) {
+            <span class="text-red-600 font-semibold">
+              {{ 'transactions.csv.errorRows' | translate: { count: importErrors().length } }}
+            </span>
+          }
+        </div>
+
+        <div
+          class="max-h-60 overflow-y-auto border border-surface-200 dark:border-surface-700 rounded"
+        >
+          <table class="w-full text-xs">
+            <thead class="bg-surface-50 dark:bg-surface-800 sticky top-0">
+              <tr>
+                <th class="p-2 text-left">#</th>
+                <th class="p-2 text-left">{{ 'transactions.table.date' | translate }}</th>
+                <th class="p-2 text-left">{{ 'transactions.table.category' | translate }}</th>
+                <th class="p-2 text-right">{{ 'transactions.table.amount' | translate }}</th>
+                <th class="p-2 text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of importRows(); track row.line) {
+                <tr [class.bg-red-50]="row.error" [class.dark:bg-red-950]="row.error">
+                  <td class="p-2">{{ row.line }}</td>
+                  <td class="p-2">{{ row.date }}</td>
+                  <td class="p-2">{{ row.categoryName }}</td>
+                  <td class="p-2 text-right">{{ row.amount }}</td>
+                  <td class="p-2">
+                    @if (row.error) {
+                      <span class="text-red-600">{{ row.error }}</span>
+                    } @else {
+                      <i class="pi pi-check text-emerald-600"></i>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <ng-template #footer>
+      <p-button
+        [label]="'common.cancel' | translate"
+        severity="secondary"
+        [text]="true"
+        (onClick)="importDialogOpen.set(false)"
+      />
+      <p-button
+        [label]="'transactions.csv.confirmImport' | translate: { count: importValid().length }"
+        icon="pi pi-check"
+        [loading]="importing()"
+        [disabled]="importValid().length === 0"
+        (onClick)="confirmImport()"
+        data-testid="confirm-import"
       />
     </ng-template>
   </p-dialog>
