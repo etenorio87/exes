@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -12,6 +13,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Account, AccountsService } from '../../core/accounts.service';
 import { AuthService } from '../../core/auth.service';
 import { LanguageService, SupportedLang } from '../../core/language.service';
+import { BackupData, RestoreOptions, RestoreService } from '../../core/restore.service';
 import { SupabaseService } from '../../core/supabase.service';
 import {
   Currency,
@@ -47,6 +49,7 @@ const LANGUAGE_OPTIONS: { label: string; value: SupportedLang; flag: string }[] 
     FormsModule,
     TranslateModule,
     ButtonModule,
+    CheckboxModule,
     DialogModule,
     InputTextModule,
     SelectModule,
@@ -63,6 +66,7 @@ export class Settings {
   private readonly confirm = inject(ConfirmationService);
   private readonly auth = inject(AuthService);
   private readonly supabase = inject(SupabaseService);
+  private readonly restoreService = inject(RestoreService);
   private readonly router = inject(Router);
   readonly accounts = inject(AccountsService);
 
@@ -242,7 +246,7 @@ export class Settings {
     try {
       const client = this.supabase.client;
       const [categories, accounts, transactions, budgets, transfers] = await Promise.all([
-        client.from('categories').select('*').not('user_id', 'is', null),
+        client.from('categories').select('*'),
         client.from('accounts').select('*'),
         client.from('transactions').select('*'),
         client.from('budgets').select('*'),
@@ -301,6 +305,130 @@ export class Settings {
     } finally {
       this.deleting.set(false);
       this.deleteDialogOpen.set(false);
+    }
+  }
+
+  // ─── Restore from backup ───────────────────────────────────────────────
+  readonly restoreDialogOpen = signal(false);
+  readonly restoreData = signal<BackupData | null>(null);
+  readonly restoring = signal(false);
+  readonly restoreOptions = signal<RestoreOptions>({
+    categories: true,
+    accounts: true,
+    transactions: true,
+    budgets: true,
+    transfers: true,
+  });
+
+  onRestoreFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const data = this.restoreService.parseBackup(reader.result as string);
+      if (!data || this.isBackupEmpty(data)) {
+        this.message.add({
+          severity: 'warn',
+          summary: this.translate.instant('settings.data.restoreNoData'),
+          life: 4000,
+        });
+        return;
+      }
+      this.restoreData.set(data);
+      this.restoreOptions.set({
+        categories: data.categories.filter((c) => !c.is_predefined).length > 0,
+        accounts: data.accounts.length > 0,
+        transactions: data.transactions.length > 0,
+        budgets: data.budgets.length > 0,
+        transfers: data.transfers.length > 0,
+      });
+      this.restoreDialogOpen.set(true);
+    };
+    reader.readAsText(file);
+    // Reset the input so the same file can be selected again
+    input.value = '';
+  }
+
+  private isBackupEmpty(data: BackupData): boolean {
+    return (
+      data.categories.length === 0 &&
+      data.accounts.length === 0 &&
+      data.transactions.length === 0 &&
+      data.budgets.length === 0 &&
+      data.transfers.length === 0
+    );
+  }
+
+  setRestoreOption(key: keyof RestoreOptions, value: boolean): void {
+    const opts = { ...this.restoreOptions() };
+    opts[key] = value;
+    // Auto-enable dependencies
+    if (value) {
+      if (key === 'transactions') {
+        opts.categories = true;
+        opts.accounts = true;
+      }
+      if (key === 'budgets') opts.categories = true;
+      if (key === 'transfers') opts.accounts = true;
+    }
+    // Auto-disable dependents
+    if (!value) {
+      if (key === 'categories') opts.budgets = false;
+      if (key === 'accounts') opts.transfers = false;
+      if (key === 'categories' || key === 'accounts') opts.transactions = false;
+    }
+    this.restoreOptions.set(opts);
+  }
+
+  customCategoryCount(): number {
+    return this.restoreData()?.categories.filter((c) => !c.is_predefined).length ?? 0;
+  }
+
+  async executeRestore(): Promise<void> {
+    const data = this.restoreData();
+    if (!data || this.restoring()) return;
+    this.restoring.set(true);
+    try {
+      const result = await this.restoreService.restore(data, this.restoreOptions());
+      const detail = [
+        result.categories > 0 ? `Categorías: ${result.categories}` : '',
+        result.accounts > 0 ? `Cuentas: ${result.accounts}` : '',
+        result.transactions > 0 ? `Transacciones: ${result.transactions}` : '',
+        result.budgets > 0 ? `Presupuestos: ${result.budgets}` : '',
+        result.transfers > 0 ? `Transferencias: ${result.transfers}` : '',
+      ]
+        .filter(Boolean)
+        .join(', ');
+      const skippedInfo = [
+        result.skipped.noCategory > 0 ? `sin categoría: ${result.skipped.noCategory}` : '',
+        result.skipped.recurrenceLinked > 0
+          ? `recurrentes: ${result.skipped.recurrenceLinked}`
+          : '',
+        result.skipped.txError > 0 ? `errores: ${result.skipped.txError}` : '',
+        result.skipped.transferNoAccount > 0
+          ? `transf. sin cuenta: ${result.skipped.transferNoAccount}`
+          : '',
+      ]
+        .filter(Boolean)
+        .join(', ');
+      this.message.add({
+        severity: 'success',
+        summary: this.translate.instant('settings.data.restoredToast'),
+        detail: detail + (skippedInfo ? ` | Omitidas: ${skippedInfo}` : ''),
+        life: 10000,
+      });
+      this.restoreDialogOpen.set(false);
+      await this.accounts.refresh();
+    } catch (e) {
+      console.error('Restore error:', e);
+      this.message.add({
+        severity: 'error',
+        summary: this.translate.instant('settings.data.restoreError'),
+        life: 6000,
+      });
+    } finally {
+      this.restoring.set(false);
     }
   }
 }
