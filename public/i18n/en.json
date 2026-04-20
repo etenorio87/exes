@@ -235,6 +235,15 @@
       "dateRequired": "Date is required.",
       "generic": "Could not save the transaction."
     },
+    "receipt": {
+      "label": "Receipt",
+      "attach": "Attach receipt",
+      "attached": "Receipt attached",
+      "view": "View receipt",
+      "remove": "Remove receipt",
+      "viewError": "Could not open the receipt.",
+      "removeError": "Could not remove the receipt."
+    },
     "budgets": {
       "title": "Budgets",
       "new": "New budget",

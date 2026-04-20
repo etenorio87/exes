@@ -345,6 +345,7 @@ export type Database = {
           description: string | null;
           id: string;
           payment_method: Database['public']['Enums']['payment_method'];
+          receipt_url: string | null;
           recurrence_id: string | null;
           recurrence_original_date: string | null;
           transaction_date: string;
@@ -361,6 +362,7 @@ export type Database = {
           description?: string | null;
           id?: string;
           payment_method: Database['public']['Enums']['payment_method'];
+          receipt_url?: string | null;
           recurrence_id?: string | null;
           recurrence_original_date?: string | null;
           transaction_date: string;
@@ -377,6 +379,7 @@ export type Database = {
           description?: string | null;
           id?: string;
           payment_method?: Database['public']['Enums']['payment_method'];
+          receipt_url?: string | null;
           recurrence_id?: string | null;
           recurrence_original_date?: string | null;
           transaction_date?: string;
@@ -432,6 +435,7 @@ export type Database = {
           id: string;
           is_virtual: boolean;
           payment_method: Database['public']['Enums']['payment_method'];
+          receipt_url: string | null;
           recurrence_id: string;
           transaction_date: string;
           type: Database['public']['Enums']['transaction_type'];
@@ -448,6 +452,7 @@ export type Database = {
           id: string;
           is_virtual: boolean;
           payment_method: Database['public']['Enums']['payment_method'];
+          receipt_url: string | null;
           recurrence_id: string;
           transaction_date: string;
           type: Database['public']['Enums']['transaction_type'];

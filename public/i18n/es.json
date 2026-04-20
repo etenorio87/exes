@@ -235,6 +235,15 @@
       "dateRequired": "La fecha es obligatoria.",
       "generic": "No se pudo guardar la transacción."
     },
+    "receipt": {
+      "label": "Justificante",
+      "attach": "Adjuntar justificante",
+      "attached": "Justificante adjunto",
+      "view": "Ver justificante",
+      "remove": "Eliminar justificante",
+      "viewError": "No se pudo abrir el justificante.",
+      "removeError": "No se pudo eliminar el justificante."
+    },
     "budgets": {
       "title": "Presupuestos",
       "new": "Nuevo presupuesto",
