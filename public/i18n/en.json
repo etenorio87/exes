@@ -56,7 +56,8 @@
       "savings": "Savings",
       "income": "Income",
       "salary": "Salary",
-      "other_income": "Other income"
+      "other_income": "Other income",
+      "transfer": "Transfer"
     }
   },
   "auth": {
@@ -266,6 +267,23 @@
       "dashboard": {
         "title": "Budgets",
         "noBudgets": "No budgets configured."
+      }
+    },
+    "transfers": {
+      "title": "Transfer",
+      "new": "New transfer",
+      "dialogTitle": "New transfer",
+      "from": "From account",
+      "to": "To account",
+      "amount": "Amount",
+      "date": "Date",
+      "description": "Description",
+      "savedToast": "Transfer completed.",
+      "deletedToast": "Transfer deleted.",
+      "deleteConfirm": "Delete this transfer? The linked transactions will also be removed.",
+      "sameAccount": "Source and destination must be different.",
+      "errors": {
+        "generic": "Could not complete the transfer."
       }
     },
     "csv": {

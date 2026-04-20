@@ -31,6 +31,7 @@ import { AccountsService } from '../../core/accounts.service';
 import { CategoriesService } from '../../core/categories.service';
 import { CsvImportRow, CsvService } from '../../core/csv.service';
 import { LanguageService } from '../../core/language.service';
+import { TransfersService } from '../../core/transfers.service';
 import { RecurrenceFrequency, RecurrencesService } from '../../core/recurrences.service';
 import {
   PaymentMethod,
@@ -98,6 +99,7 @@ export class Transactions {
   private readonly translate = inject(TranslateService);
   private readonly lang = inject(LanguageService);
   private readonly accountsService = inject(AccountsService);
+  private readonly transfersService = inject(TransfersService);
   private readonly csv = inject(CsvService);
   private readonly confirm = inject(ConfirmationService);
   private readonly message = inject(MessageService);
@@ -607,6 +609,69 @@ export class Transactions {
       });
     } finally {
       this.importing.set(false);
+    }
+  }
+
+  // ─── Transfers ──────────────────────────────────────────────────────────
+  readonly transferDialogOpen = signal(false);
+  readonly transferSaving = signal(false);
+
+  readonly transferForm = this.fb.nonNullable.group({
+    from_account_id: ['', [Validators.required]],
+    to_account_id: ['', [Validators.required]],
+    amount: [0, [Validators.required, Validators.min(0.01)]],
+    transfer_date: [new Date(), [Validators.required]],
+    description: [''],
+  });
+
+  openTransferDialog(): void {
+    const accounts = this.accountsService.all();
+    const defaultId = accounts.find((a) => a.is_default)?.id ?? accounts[0]?.id ?? '';
+    this.transferForm.reset({
+      from_account_id: defaultId,
+      to_account_id: '',
+      amount: 0,
+      transfer_date: new Date(),
+      description: '',
+    });
+    this.transferDialogOpen.set(true);
+  }
+
+  async saveTransfer(): Promise<void> {
+    if (this.transferForm.invalid || this.transferSaving()) return;
+    const v = this.transferForm.getRawValue();
+
+    if (v.from_account_id === v.to_account_id) {
+      this.message.add({
+        severity: 'warn',
+        summary: this.translate.instant('transactions.transfers.sameAccount'),
+        life: 4000,
+      });
+      return;
+    }
+
+    this.transferSaving.set(true);
+    try {
+      await this.transfersService.create({
+        from_account_id: v.from_account_id,
+        to_account_id: v.to_account_id,
+        amount: v.amount,
+        transfer_date: dateOnly(v.transfer_date)!,
+        description: v.description.trim() || null,
+      });
+      this.message.add({
+        severity: 'success',
+        summary: this.translate.instant('transactions.transfers.savedToast'),
+      });
+      this.transferDialogOpen.set(false);
+      await this.fetch();
+    } catch {
+      this.message.add({
+        severity: 'error',
+        summary: this.translate.instant('transactions.transfers.errors.generic'),
+      });
+    } finally {
+      this.transferSaving.set(false);
     }
   }
 }
