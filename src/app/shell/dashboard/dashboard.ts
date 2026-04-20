@@ -14,11 +14,20 @@ import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
 import { DatePickerModule } from 'primeng/datepicker';
 import { AuthService } from '../../core/auth.service';
+import { BudgetsService, BudgetPeriod } from '../../core/budgets.service';
 import { CategoriesService } from '../../core/categories.service';
 import { DashboardData, DashboardService } from '../../core/dashboard.service';
 import { LanguageService } from '../../core/language.service';
 import { TransactionType } from '../../core/transactions.service';
 import { UserPreferencesService } from '../../core/user-preferences.service';
+
+export interface BudgetProgress {
+  categoryId: string;
+  amount: number;
+  spent: number;
+  percentage: number;
+  period: BudgetPeriod;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -29,6 +38,7 @@ import { UserPreferencesService } from '../../core/user-preferences.service';
 export class Dashboard {
   private readonly auth = inject(AuthService);
   private readonly dashboardService = inject(DashboardService);
+  private readonly budgetsService = inject(BudgetsService);
   private readonly categories = inject(CategoriesService);
   private readonly prefs = inject(UserPreferencesService);
   private readonly lang = inject(LanguageService);
@@ -60,6 +70,8 @@ export class Dashboard {
     responsive: true,
     maintainAspectRatio: false,
   });
+
+  readonly budgetProgress = signal<BudgetProgress[]>([]);
 
   readonly evolutionData = signal<object | null>(null);
   readonly evolutionOptions = signal<object>({
@@ -107,9 +119,36 @@ export class Dashboard {
       this.data.set(result);
       this.buildDoughnut(result);
       this.buildEvolution(result);
+      this.buildBudgetProgress(result);
     } finally {
       this.loading.set(false);
     }
+  }
+
+  private buildBudgetProgress(d: DashboardData): void {
+    const budgets = this.budgetsService.all();
+    if (budgets.length === 0) {
+      this.budgetProgress.set([]);
+      return;
+    }
+
+    const progress: BudgetProgress[] = [];
+    for (const budget of budgets) {
+      // Dashboard shows current-month spending against the budget amount.
+      // The full budgets page handles multi-period calculation properly.
+      const spent =
+        d.expensesByCategory.find((e) => e.categoryId === budget.category_id)?.total ?? 0;
+      const amount = Number(budget.amount);
+      const percentage = amount > 0 ? (spent / amount) * 100 : 0;
+      progress.push({
+        categoryId: budget.category_id,
+        amount,
+        spent,
+        percentage,
+        period: budget.period,
+      });
+    }
+    this.budgetProgress.set(progress.sort((a, b) => b.percentage - a.percentage));
   }
 
   private buildDoughnut(d: DashboardData): void {
@@ -218,5 +257,14 @@ export class Dashboard {
   }
   amountPrefix(type: TransactionType): string {
     return type === 'income' ? '+' : '−';
+  }
+
+  // Budget helpers
+  readonly Math = Math;
+
+  budgetProgressColor(percentage: number): string {
+    if (percentage > 100) return 'bg-red-500';
+    if (percentage > 80) return 'bg-yellow-500';
+    return 'bg-emerald-500';
   }
 }
