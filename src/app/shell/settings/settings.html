@@ -1,0 +1,74 @@
+<div class="space-y-6 max-w-lg">
+  <h1 class="text-2xl font-bold text-surface-900 dark:text-surface-50">
+    {{ 'settings.title' | translate }}
+  </h1>
+
+  <div
+    class="bg-white dark:bg-surface-900 border border-surface-200 dark:border-surface-700 rounded-lg p-6 flex flex-col gap-5"
+  >
+    <div class="flex flex-col gap-1">
+      <label for="settings-currency" class="text-sm font-medium">
+        {{ 'settings.currency' | translate }}
+      </label>
+      <p-select
+        inputId="settings-currency"
+        [options]="currencyOptions"
+        [ngModel]="currency()"
+        (ngModelChange)="currency.set($event)"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="settings-dateformat" class="text-sm font-medium">
+        {{ 'settings.dateFormat' | translate }}
+      </label>
+      <p-select
+        inputId="settings-dateformat"
+        [options]="dateFormatOptions"
+        [ngModel]="dateFormat()"
+        (ngModelChange)="dateFormat.set($event)"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="settings-language" class="text-sm font-medium">
+        {{ 'settings.language' | translate }}
+      </label>
+      <p-select
+        inputId="settings-language"
+        [options]="languageOptions"
+        [ngModel]="language()"
+        (ngModelChange)="language.set($event)"
+        optionLabel="label"
+        optionValue="value"
+      >
+        <ng-template #selectedItem let-opt>
+          @if (opt) {
+            <span class="inline-flex items-center gap-2">
+              <img [src]="opt.flag" alt="" class="inline-block h-4 w-auto" />
+              <span>{{ opt.label }}</span>
+            </span>
+          }
+        </ng-template>
+        <ng-template #item let-opt>
+          <span class="inline-flex items-center gap-2">
+            <img [src]="opt.flag" alt="" class="inline-block h-4 w-auto" />
+            <span>{{ opt.label }}</span>
+          </span>
+        </ng-template>
+      </p-select>
+    </div>
+
+    <p-button
+      [label]="'settings.save' | translate"
+      icon="pi pi-check"
+      [loading]="saving()"
+      (onClick)="save()"
+      data-testid="save-settings"
+    />
+  </div>
+</div>

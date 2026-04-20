@@ -17,6 +17,10 @@ export const shellRoutes: Routes = [
         path: 'categories',
         loadComponent: () => import('./categories/categories').then((m) => m.Categories),
       },
+      {
+        path: 'settings',
+        loadComponent: () => import('./settings/settings').then((m) => m.Settings),
+      },
       // Backwards compat: bookmarked /app/home from sub-fase 1.1.
       { path: 'home', redirectTo: 'dashboard' },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
