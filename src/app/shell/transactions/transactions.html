@@ -184,6 +184,13 @@
                 tooltipPosition="top"
               ></i>
             }
+            @if (tx.receipt_url) {
+              <i
+                class="pi pi-paperclip text-xs text-surface-400"
+                [pTooltip]="'transactions.receipt.label' | translate"
+                tooltipPosition="top"
+              ></i>
+            }
           </span>
         </td>
         <td>
@@ -380,6 +387,74 @@
           optionValue="value"
           [allowEmpty]="false"
         />
+      </div>
+
+      <!-- Receipt -->
+      <div class="flex flex-col gap-2 pt-1 border-t border-surface-100 dark:border-surface-700">
+        <span class="text-sm font-medium text-surface-700 dark:text-surface-300">
+          {{ 'transactions.receipt.label' | translate }}
+        </span>
+
+        @if (currentReceiptPath()) {
+          <!-- Existing receipt -->
+          <div class="flex items-center gap-2">
+            <i class="pi pi-paperclip text-primary-500"></i>
+            <span class="text-sm text-surface-600 dark:text-surface-400 flex-1 truncate">
+              {{ 'transactions.receipt.attached' | translate }}
+            </span>
+            <p-button
+              icon="pi pi-eye"
+              [text]="true"
+              severity="secondary"
+              size="small"
+              [pTooltip]="'transactions.receipt.view' | translate"
+              (onClick)="viewReceipt()"
+            />
+            <p-button
+              icon="pi pi-times"
+              [text]="true"
+              severity="danger"
+              size="small"
+              [loading]="receiptUploading()"
+              [pTooltip]="'transactions.receipt.remove' | translate"
+              (onClick)="removeReceipt()"
+            />
+          </div>
+        } @else if (pendingReceiptFile()) {
+          <!-- File selected, pending upload -->
+          <div class="flex items-center gap-2">
+            <i class="pi pi-file text-primary-500"></i>
+            <span class="text-sm text-surface-600 dark:text-surface-400 flex-1 truncate">
+              {{ pendingReceiptFile()!.name }}
+            </span>
+            <p-button
+              icon="pi pi-times"
+              [text]="true"
+              severity="secondary"
+              size="small"
+              (onClick)="pendingReceiptFile.set(null)"
+            />
+          </div>
+        } @else {
+          <!-- No receipt -->
+          <div>
+            <p-button
+              [label]="'transactions.receipt.attach' | translate"
+              icon="pi pi-paperclip"
+              severity="secondary"
+              [text]="true"
+              size="small"
+              (onClick)="receiptInput.click()"
+            />
+            <input
+              #receiptInput
+              type="file"
+              accept="image/jpeg,image/png,image/webp,application/pdf"
+              class="hidden"
+              (change)="onReceiptFileSelected($event)"
+            />
+          </div>
+        }
       </div>
 
       <!-- Recurrence toggle (only for new transactions) -->

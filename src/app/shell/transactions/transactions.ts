@@ -31,6 +31,7 @@ import { AccountsService } from '../../core/accounts.service';
 import { CategoriesService } from '../../core/categories.service';
 import { CsvImportRow, CsvService } from '../../core/csv.service';
 import { LanguageService } from '../../core/language.service';
+import { ReceiptsService } from '../../core/receipts.service';
 import { TransfersService } from '../../core/transfers.service';
 import { RecurrenceFrequency, RecurrencesService } from '../../core/recurrences.service';
 import {
@@ -100,6 +101,7 @@ export class Transactions {
   private readonly lang = inject(LanguageService);
   private readonly accountsService = inject(AccountsService);
   private readonly transfersService = inject(TransfersService);
+  private readonly receipts = inject(ReceiptsService);
   private readonly csv = inject(CsvService);
   private readonly confirm = inject(ConfirmationService);
   private readonly message = inject(MessageService);
@@ -191,6 +193,13 @@ export class Transactions {
   readonly dialogOpen = signal(false);
   readonly editing = signal<TransactionRow | null>(null);
   readonly saving = signal(false);
+
+  // ─── Receipt state ────────────────────────────────────────────────────
+  /** File selected by the user but not yet uploaded (pending save). */
+  readonly pendingReceiptFile = signal<File | null>(null);
+  /** Storage path of the current receipt (when editing). */
+  readonly currentReceiptPath = signal<string | null>(null);
+  readonly receiptUploading = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     type: ['expense' as TransactionType, [Validators.required]],
@@ -311,6 +320,8 @@ export class Transactions {
     this.editing.set(null);
     this.isRecurrent.set(false);
     this.frequency.set('monthly');
+    this.pendingReceiptFile.set(null);
+    this.currentReceiptPath.set(null);
     const today = dateOnly(new Date())!;
     this.endDate.set(new Date(this.recurrences.defaultEndDate(today)));
     this.form.reset({
@@ -328,6 +339,8 @@ export class Transactions {
   openEditDirect(tx: TransactionRow): void {
     this.editing.set(tx);
     this.isRecurrent.set(false); // hide recurrence fields in edit mode
+    this.pendingReceiptFile.set(null);
+    this.currentReceiptPath.set(tx.receipt_url ?? null);
     this.form.reset({
       type: tx.type,
       amount: Number(tx.amount),
@@ -354,6 +367,49 @@ export class Transactions {
 
   closeDialog(): void {
     this.dialogOpen.set(false);
+  }
+
+  // ─── Receipt handlers ─────────────────────────────────────────────────
+  onReceiptFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    this.pendingReceiptFile.set(file);
+    input.value = ''; // reset so same file can be re-selected
+  }
+
+  async viewReceipt(): Promise<void> {
+    const path = this.currentReceiptPath();
+    if (!path) return;
+    try {
+      const url = await this.receipts.getSignedUrl(path);
+      window.open(url, '_blank');
+    } catch {
+      this.message.add({
+        severity: 'error',
+        summary: this.translate.instant('transactions.receipt.viewError'),
+        life: 4000,
+      });
+    }
+  }
+
+  async removeReceipt(): Promise<void> {
+    const tx = this.editing();
+    const path = this.currentReceiptPath();
+    if (!tx || !path) return;
+    this.receiptUploading.set(true);
+    try {
+      await this.receipts.remove(tx.id, path);
+      this.currentReceiptPath.set(null);
+      await this.fetch();
+    } catch {
+      this.message.add({
+        severity: 'error',
+        summary: this.translate.instant('transactions.receipt.removeError'),
+        life: 4000,
+      });
+    } finally {
+      this.receiptUploading.set(false);
+    }
   }
 
   async save(): Promise<void> {
@@ -426,10 +482,19 @@ export class Transactions {
           transaction_date: txDate,
           description: v.description.trim() || null,
         };
+        let savedId: string;
         if (editing) {
           await this.txService.update(editing.id, input);
+          savedId = editing.id;
         } else {
-          await this.txService.create(input);
+          const created = await this.txService.create(input);
+          savedId = created.id;
+        }
+        // Upload pending receipt if one was selected
+        const pendingFile = this.pendingReceiptFile();
+        if (pendingFile) {
+          await this.receipts.upload(savedId, pendingFile);
+          this.pendingReceiptFile.set(null);
         }
       }
       this.message.add({
