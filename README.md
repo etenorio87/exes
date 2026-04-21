@@ -95,5 +95,5 @@ Desarrollo organizado por fases:
 - **Fase 3 — Power user** ✅
   Cuentas/wallets con UI y saldo acumulado. Presupuestos por categoría. Import/export CSV. Transferencias entre cuentas. Backup/restore selectivo + borrado de cuenta (GDPR). Adjuntar justificantes (Supabase Storage). PWA instalable. Login con Google OAuth.
 
-- **Fase 4 — Diseño profesional** *(en progreso)*
+- ✅ **Fase 4 — Diseño profesional**
   Icono y paleta de color con identidad visual propia (estilo fintech, símbolo €).
