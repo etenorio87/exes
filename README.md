@@ -89,8 +89,11 @@ Desarrollo organizado por fases:
 - **Fase 1 — MVP usable** ✅
   Autenticación, CRUD de categorías y transacciones con filtros y paginación, dashboard con gráficos Chart.js, i18n ES/EN, selector de idioma con banderas, papelera con restaurar, preferencias de usuario (moneda, formato de fecha).
 
-- **Fase 2 — Productividad**
+- **Fase 2 — Productividad** ✅
   Transacciones recurrentes con patrón Google Calendar para edición. Reportes (mes vs anterior, evolución temporal, top categorías). Búsqueda, preferencias de usuario, modo oscuro.
 
-- **Fase 3 — Power user**
-  Cuentas/wallets con UI y saldo acumulado. Presupuestos por categoría. Import/export CSV. PWA. Backup y borrado de cuenta.
+- **Fase 3 — Power user** ✅
+  Cuentas/wallets con UI y saldo acumulado. Presupuestos por categoría. Import/export CSV. Transferencias entre cuentas. Backup/restore selectivo + borrado de cuenta (GDPR). Adjuntar justificantes (Supabase Storage). PWA instalable. Login con Google OAuth.
+
+- **Fase 4 — Diseño profesional** *(en progreso)*
+  Icono y paleta de color con identidad visual propia (estilo fintech, símbolo €).
