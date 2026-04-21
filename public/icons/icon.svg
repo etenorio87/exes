@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background: rounded square, EU blue -->
+  <rect width="512" height="512" rx="96" fill="#003399"/>
+
+  <!-- Euro symbol: golden, bold, centered -->
+  <!-- The € is constructed from arcs + horizontal bars for crisp rendering -->
+
+  <!-- Main arc of the € (C shape) -->
+  <path
+    d="M320 148
+       C286 128 248 128 218 144
+       C172 168 144 216 144 264
+       C144 312 172 360 218 384
+       C248 400 286 400 320 380"
+    fill="none"
+    stroke="#FFD700"
+    stroke-width="52"
+    stroke-linecap="round"
+  />
+
+  <!-- Top horizontal bar -->
+  <line x1="116" y1="232" x2="296" y2="232" stroke="#FFD700" stroke-width="46" stroke-linecap="round"/>
+
+  <!-- Bottom horizontal bar -->
+  <line x1="116" y1="296" x2="296" y2="296" stroke="#FFD700" stroke-width="46" stroke-linecap="round"/>
+</svg>
