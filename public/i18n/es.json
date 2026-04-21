@@ -61,9 +61,11 @@
     }
   },
   "auth": {
+    "orEmail": "o con email",
     "login": {
       "title": "Iniciar sesión",
       "submit": "Entrar",
+      "google": "Continuar con Google",
       "forgot": "¿Olvidaste tu contraseña?",
       "noAccount": "Crear cuenta"
     },

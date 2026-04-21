@@ -33,7 +33,21 @@ export class Login {
   });
 
   readonly submitting = signal(false);
+  readonly googleLoading = signal(false);
   readonly error = signal<string | null>(null);
+
+  async signInWithGoogle(): Promise<void> {
+    if (this.googleLoading()) return;
+    this.googleLoading.set(true);
+    this.error.set(null);
+    try {
+      await this.auth.signInWithGoogle();
+      // Page will redirect to Google — no further action needed here
+    } catch {
+      this.error.set('auth.errors.generic');
+      this.googleLoading.set(false);
+    }
+  }
 
   async onSubmit(): Promise<void> {
     if (this.form.invalid || this.submitting()) return;
