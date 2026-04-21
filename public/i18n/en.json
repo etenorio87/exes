@@ -61,9 +61,11 @@
     }
   },
   "auth": {
+    "orEmail": "or with email",
     "login": {
       "title": "Sign in",
       "submit": "Sign in",
+      "google": "Continue with Google",
       "forgot": "Forgot your password?",
       "noAccount": "Create account"
     },
