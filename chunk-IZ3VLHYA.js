@@ -1,0 +1,38 @@
+import{c as W,d as Z,e as g,f as C}from"./chunk-C5WUBOVC.js";import{Aa as U,T as Y,ja as $,ka as G,la as J,ma as x,ta as K}from"./chunk-M4T36MQF.js";import{a as X}from"./chunk-GPANOKNG.js";import{i as H,k as L,l as V}from"./chunk-OCPLLTZX.js";import{$a as s,Ab as h,Bb as Q,Cb as v,Db as q,Fb as m,Gb as f,Ha as a,K as k,L as I,Mb as O,N as B,Nb as y,Ob as d,P as b,Pb as F,Qb as z,Va as T,Wa as A,Wb as P,Za as N,_a as R,ea as j,ja as E,nb as i,ob as l,pb as c,qb as S,ub as M,vb as D,wb as _}from"./chunk-6Q4WZWJD.js";import"./chunk-7CGTOI24.js";var ee=`
+    .p-card {
+        background: dt('card.background');
+        color: dt('card.color');
+        box-shadow: dt('card.shadow');
+        border-radius: dt('card.border.radius');
+        display: flex;
+        flex-direction: column;
+    }
+
+    .p-card-caption {
+        display: flex;
+        flex-direction: column;
+        gap: dt('card.caption.gap');
+    }
+
+    .p-card-body {
+        padding: dt('card.body.padding');
+        display: flex;
+        flex-direction: column;
+        gap: dt('card.body.gap');
+    }
+
+    .p-card-title {
+        font-size: dt('card.title.font.size');
+        font-weight: dt('card.title.font.weight');
+    }
+
+    .p-card-subtitle {
+        color: dt('card.subtitle.color');
+    }
+`;var oe=["header"],le=["title"],ce=["subtitle"],pe=["content"],de=["footer"],se=["*",[["p-header"]],[["p-footer"]]],me=["*","p-header","p-footer"];function fe(t,p){t&1&&_(0)}function ue(t,p){if(t&1&&(l(0,"div",1),v(1,1),s(2,fe,1,0,"ng-container",2),c()),t&2){let e=h();y(e.cx("header")),i("pBind",e.ptm("header")),a(2),i("ngTemplateOutlet",e.headerTemplate||e._headerTemplate)}}function ye(t,p){if(t&1&&(M(0),d(1),D()),t&2){let e=h(2);a(),F(e.header)}}function he(t,p){t&1&&_(0)}function _e(t,p){if(t&1&&(l(0,"div",1),s(1,ye,2,1,"ng-container",3)(2,he,1,0,"ng-container",2),c()),t&2){let e=h();y(e.cx("title")),i("pBind",e.ptm("title")),a(),i("ngIf",e.header&&!e._titleTemplate&&!e.titleTemplate),a(),i("ngTemplateOutlet",e.titleTemplate||e._titleTemplate)}}function ge(t,p){if(t&1&&(M(0),d(1),D()),t&2){let e=h(2);a(),F(e.subheader)}}function be(t,p){t&1&&_(0)}function Te(t,p){if(t&1&&(l(0,"div",1),s(1,ge,2,1,"ng-container",3)(2,be,1,0,"ng-container",2),c()),t&2){let e=h();y(e.cx("subtitle")),i("pBind",e.ptm("subtitle")),a(),i("ngIf",e.subheader&&!e._subtitleTemplate&&!e.subtitleTemplate),a(),i("ngTemplateOutlet",e.subtitleTemplate||e._subtitleTemplate)}}function ve(t,p){t&1&&_(0)}function xe(t,p){t&1&&_(0)}function Ce(t,p){if(t&1&&(l(0,"div",1),v(1,2),s(2,xe,1,0,"ng-container",2),c()),t&2){let e=h();y(e.cx("footer")),i("pBind",e.ptm("footer")),a(2),i("ngTemplateOutlet",e.footerTemplate||e._footerTemplate)}}var Ee=`
+    ${ee}
+
+    .p-card {
+        display: block;
+    }
+`,Se={root:"p-card p-component",header:"p-card-header",body:"p-card-body",caption:"p-card-caption",title:"p-card-title",subtitle:"p-card-subtitle",content:"p-card-content",footer:"p-card-footer"},te=(()=>{class t extends K{name="card";style=Ee;classes=Se;static \u0275fac=(()=>{let e;return function(n){return(e||(e=E(t)))(n||t)}})();static \u0275prov=k({token:t,factory:t.\u0275fac})}return t})();var ne=new B("CARD_INSTANCE"),w=(()=>{class t extends Z{componentName="Card";$pcCard=b(ne,{optional:!0,skipSelf:!0})??void 0;bindDirectiveInstance=b(g,{self:!0});_componentStyle=b(te);onAfterViewChecked(){this.bindDirectiveInstance.setAttrs(this.ptms(["host","root"]))}header;subheader;set style(e){Y(this._style(),e)||(this._style.set(e),this.el?.nativeElement&&e&&Object.keys(e).forEach(r=>{this.el.nativeElement.style[r]=e[r]}))}get style(){return this._style()}styleClass;headerFacet;footerFacet;headerTemplate;titleTemplate;subtitleTemplate;contentTemplate;footerTemplate;_headerTemplate;_titleTemplate;_subtitleTemplate;_contentTemplate;_footerTemplate;_style=j(null);getBlockableElement(){return this.el.nativeElement}templates;onAfterContentInit(){this.templates.forEach(e=>{switch(e.getType()){case"header":this._headerTemplate=e.template;break;case"title":this._titleTemplate=e.template;break;case"subtitle":this._subtitleTemplate=e.template;break;case"content":this._contentTemplate=e.template;break;case"footer":this._footerTemplate=e.template;break;default:this._contentTemplate=e.template;break}})}static \u0275fac=(()=>{let e;return function(n){return(e||(e=E(t)))(n||t)}})();static \u0275cmp=T({type:t,selectors:[["p-card"]],contentQueries:function(r,n,u){if(r&1&&q(u,$,5)(u,G,5)(u,oe,4)(u,le,4)(u,ce,4)(u,pe,4)(u,de,4)(u,J,4),r&2){let o;m(o=f())&&(n.headerFacet=o.first),m(o=f())&&(n.footerFacet=o.first),m(o=f())&&(n.headerTemplate=o.first),m(o=f())&&(n.titleTemplate=o.first),m(o=f())&&(n.subtitleTemplate=o.first),m(o=f())&&(n.contentTemplate=o.first),m(o=f())&&(n.footerTemplate=o.first),m(o=f())&&(n.templates=o)}},hostVars:4,hostBindings:function(r,n){r&2&&(O(n._style()),y(n.cn(n.cx("root"),n.styleClass)))},inputs:{header:"header",subheader:"subheader",style:"style",styleClass:"styleClass"},features:[P([te,{provide:ne,useExisting:t},{provide:W,useExisting:t}]),N([g]),R],ngContentSelectors:me,decls:8,vars:11,consts:[[3,"pBind","class",4,"ngIf"],[3,"pBind"],[4,"ngTemplateOutlet"],[4,"ngIf"]],template:function(r,n){r&1&&(Q(se),s(0,ue,3,4,"div",0),l(1,"div",1),s(2,_e,3,5,"div",0)(3,Te,3,5,"div",0),l(4,"div",1),v(5),s(6,ve,1,0,"ng-container",2),c(),s(7,Ce,3,4,"div",0),c()),r&2&&(i("ngIf",n.headerFacet||n.headerTemplate||n._headerTemplate),a(),y(n.cx("body")),i("pBind",n.ptm("body")),a(),i("ngIf",n.header||n.titleTemplate||n._titleTemplate),a(),i("ngIf",n.subheader||n.subtitleTemplate||n._subtitleTemplate),a(),y(n.cx("content")),i("pBind",n.ptm("content")),a(2),i("ngTemplateOutlet",n.contentTemplate||n._contentTemplate),a(),i("ngIf",n.footerFacet||n.footerTemplate||n._footerTemplate))},dependencies:[V,H,L,x,C,g],encapsulation:2,changeDetection:0})}return t})(),ie=(()=>{class t{static \u0275fac=function(r){return new(r||t)};static \u0275mod=A({type:t});static \u0275inj=I({imports:[w,x,C,x,C]})}return t})();var ae=class t{currentYear=new Date().getFullYear();static \u0275fac=function(e){return new(e||t)};static \u0275cmp=T({type:t,selectors:[["app-auth-layout"]],decls:25,vars:1,consts:[[1,"min-h-screen","flex"],[1,"hidden","lg:flex","flex-col","justify-between","w-2/5","p-12",2,"background-color","#003399"],[1,"flex","items-center","gap-3"],[1,"flex","items-center","justify-center","w-10","h-10","rounded-xl","font-black","text-xl",2,"background-color","#FFD700","color","#003399"],[1,"text-2xl","font-bold","text-white","tracking-wide"],[1,"text-4xl","font-bold","text-white","leading-tight","mb-4"],[1,"text-white/70","text-base","leading-relaxed"],[1,"text-white/40","text-sm"],[1,"flex","flex-1","items-center","justify-center","bg-surface-50","dark:bg-surface-950","p-6"],[1,"w-full","max-w-md"],[1,"flex","lg:hidden","items-center","justify-center","gap-2","mb-6"],[1,"flex","items-center","justify-center","w-9","h-9","rounded-xl","font-black","text-lg",2,"background-color","#003399","color","#FFD700"],[1,"text-2xl","font-bold","text-primary-600"]],template:function(e,r){e&1&&(l(0,"div",0)(1,"div",1)(2,"div",2)(3,"span",3),d(4,"\u20AC"),c(),l(5,"span",4),d(6,"EXES"),c()(),l(7,"div")(8,"p",5),d(9," Tus finanzas,"),S(10,"br"),d(11,"bajo control. "),c(),l(12,"p",6),d(13," Registra ingresos y gastos, controla presupuestos y visualiza tu evoluci\xF3n financiera en tiempo real. "),c()(),l(14,"p",7),d(15),c()(),l(16,"div",8)(17,"div",9)(18,"div",10)(19,"span",11),d(20,"\u20AC"),c(),l(21,"span",12),d(22,"EXES"),c()(),l(23,"p-card"),S(24,"router-outlet"),c()()()()),e&2&&(a(15),z("\xA9 ",r.currentYear," EXES"))},dependencies:[X,U,ie,w],encapsulation:2,changeDetection:0})};export{ae as AuthLayout};

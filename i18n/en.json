@@ -1,0 +1,345 @@
+{
+  "app": {
+    "title": "EXES",
+    "tagline": "Personal finance management",
+    "loading": "Loading..."
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "close": "Close",
+    "all": "All"
+  },
+  "categories": {
+    "title": "Categories",
+    "new": "New category",
+    "editDialogTitle": "Edit category",
+    "newDialogTitle": "New category",
+    "empty": "You don't have any custom categories yet. Click \"New category\" to create your first one.",
+    "predefinedTooltip": "Predefined category (read-only)",
+    "deleteConfirm": "Delete category \"{{name}}\"? This can be reverted if it hasn't been used.",
+    "deletedToast": "Category deleted.",
+    "savedToast": "Category saved.",
+    "fields": {
+      "name": "Name",
+      "type": "Type",
+      "color": "Color",
+      "icon": "Icon"
+    },
+    "filter": {
+      "label": "Filter by type"
+    },
+    "types": {
+      "income": "Income",
+      "expense": "Expense",
+      "both": "Both"
+    },
+    "errors": {
+      "nameRequired": "Name is required.",
+      "typeRequired": "Type is required.",
+      "duplicateName": "You already have a category with that name.",
+      "cannotDeleteInUse": "Cannot delete: this category has linked transactions.",
+      "generic": "Could not save the category."
+    },
+    "predefined": {
+      "food": "Food",
+      "transport": "Transport",
+      "leisure": "Leisure",
+      "health": "Health",
+      "education": "Education",
+      "housing": "Housing",
+      "services": "Services",
+      "clothing": "Clothing",
+      "savings": "Savings",
+      "income": "Income",
+      "salary": "Salary",
+      "other_income": "Other income",
+      "transfer": "Transfer"
+    }
+  },
+  "auth": {
+    "orEmail": "or with email",
+    "login": {
+      "title": "Sign in",
+      "submit": "Sign in",
+      "google": "Continue with Google",
+      "forgot": "Forgot your password?",
+      "noAccount": "Create account"
+    },
+    "register": {
+      "title": "Create account",
+      "submit": "Sign up",
+      "haveAccount": "I already have an account"
+    },
+    "recover": {
+      "title": "Recover password",
+      "description": "We'll send you a link to reset your password.",
+      "submit": "Send link",
+      "success": "If the email exists, you'll receive a link in a few minutes.",
+      "backToLogin": "Back to sign in"
+    },
+    "reset": {
+      "title": "New password",
+      "submit": "Change password",
+      "success": "Password updated. Redirecting..."
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "passwordPrompt": "Enter a password",
+      "passwordWeak": "Weak",
+      "passwordMedium": "Medium",
+      "passwordStrong": "Strong"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "passwordsDontMatch": "Passwords do not match."
+    }
+  },
+  "shell": {
+    "openMenu": "Open menu",
+    "placeholder": "Coming soon.",
+    "nav": {
+      "dashboard": "Dashboard",
+      "transactions": "Transactions",
+      "budgets": "Budgets",
+      "categories": "Categories",
+      "settings": "Settings"
+    },
+    "userMenu": {
+      "label": "User menu",
+      "language": "Language",
+      "darkMode": "Dark mode",
+      "lightMode": "Light mode",
+      "signOut": "Sign out"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "income": "Income",
+    "expenses": "Expenses",
+    "balance": "Balance",
+    "expensesByCategory": "Expenses by category",
+    "recentTransactions": "Recent transactions",
+    "noExpenses": "No expenses this month.",
+    "noTransactions": "No transactions this month.",
+    "amount": "Amount",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "vsPrevMonth": "vs previous month",
+    "evolution": "Evolution (12 months)",
+    "noEvolutionData": "Not enough data for the chart.",
+    "topCategories": "Top 5 categories",
+    "noTopCategories": "No expenses by category this month.",
+    "accumulatedBalance": "Accumulated balance",
+    "totalBalance": "Total"
+  },
+  "settings": {
+    "title": "Settings",
+    "currency": "Currency",
+    "dateFormat": "Date format",
+    "language": "Language",
+    "theme": "Theme",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "savedToast": "Settings saved.",
+    "save": "Save changes",
+    "data": {
+      "title": "Your data",
+      "exportTitle": "Export data",
+      "exportDescription": "Download a JSON file with all your transactions, categories, accounts, budgets and transfers.",
+      "exportButton": "Download backup",
+      "exportedToast": "Backup downloaded.",
+      "deleteTitle": "Delete account",
+      "deleteDescription": "Permanently delete your account and all associated data. This action cannot be undone.",
+      "deleteButton": "Delete my account",
+      "deleteConfirm": "Are you sure? Type DELETE to confirm.",
+      "deleteInput": "Type DELETE",
+      "deletedToast": "Account deleted. Goodbye.",
+      "deleteError": "Could not delete the account. Try again later.",
+      "restoreTitle": "Restore from backup",
+      "restoreDescription": "Upload a previously exported JSON file and choose what to restore.",
+      "restoreButton": "Upload backup",
+      "restoreDialogTitle": "Restore backup",
+      "restoreSelectAll": "Select all",
+      "restoreCategories": "Custom categories",
+      "restoreAccounts": "Accounts",
+      "restoreTransactions": "Transactions",
+      "restoreBudgets": "Budgets",
+      "restoreTransfers": "Transfers",
+      "restoreDependency": "(requires {{deps}})",
+      "restoreConfirm": "Restore selected",
+      "restoreProgress": "Restoring...",
+      "restoredToast": "Backup restored successfully.",
+      "restoreError": "Error restoring backup.",
+      "restoreNoData": "No data found in the file.",
+      "restoreCounts": "{{count}} items"
+    },
+    "accounts": {
+      "title": "Accounts",
+      "new": "New account",
+      "namePlaceholder": "Account name",
+      "default": "Default",
+      "setDefault": "Set as default",
+      "deleteConfirm": "Delete account \"{{name}}\"? Transactions will remain linked to it.",
+      "deletedToast": "Account deleted.",
+      "savedToast": "Account saved.",
+      "cannotDeleteDefault": "Cannot delete the default account.",
+      "cannotDeleteInUse": "Cannot delete: this account has linked transactions.",
+      "errors": {
+        "nameRequired": "Name is required.",
+        "duplicateName": "You already have an account with that name.",
+        "generic": "Could not save the account."
+      }
+    }
+  },
+  "recurrences": {
+    "toggle": "Recurring",
+    "frequency": "Frequency",
+    "endDate": "Until",
+    "frequencies": {
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "semiannual": "Semiannual",
+      "annual": "Annual"
+    },
+    "editDialog": {
+      "title": "Edit recurring transaction",
+      "deleteTitle": "Delete recurring transaction",
+      "onlyThis": "Only this occurrence",
+      "thisAndFuture": "This and future",
+      "all": "All occurrences",
+      "continue": "Continue"
+    },
+    "indicator": "Recurring"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "new": "New transaction",
+    "newDialogTitle": "New transaction",
+    "editDialogTitle": "Edit transaction",
+    "empty": "No transactions match the current filters.",
+    "emptyTrash": "Trash is empty.",
+    "savedToast": "Transaction saved.",
+    "deletedToast": "Transaction deleted.",
+    "restoredToast": "Transaction restored.",
+    "deleteConfirm": "Delete this transaction?",
+    "showDeleted": "Show deleted",
+    "restore": "Restore",
+    "fields": {
+      "type": "Type",
+      "amount": "Amount",
+      "category": "Category",
+      "date": "Date",
+      "description": "Description",
+      "paymentMethod": "Payment method",
+      "account": "Account",
+      "descriptionPlaceholder": "Optional"
+    },
+    "filters": {
+      "from": "From",
+      "to": "To",
+      "type": "Type",
+      "categories": "Categories",
+      "search": "Search by description"
+    },
+    "paymentMethods": {
+      "cash": "Cash",
+      "card": "Card",
+      "transfer": "Transfer"
+    },
+    "table": {
+      "date": "Date",
+      "description": "Description",
+      "category": "Category",
+      "amount": "Amount",
+      "paymentMethod": "Method",
+      "actions": "Actions"
+    },
+    "errors": {
+      "amountInvalid": "Enter an amount greater than 0.",
+      "categoryRequired": "Pick a category.",
+      "dateRequired": "Date is required.",
+      "generic": "Could not save the transaction."
+    },
+    "receipt": {
+      "label": "Receipt",
+      "attach": "Attach receipt",
+      "attached": "Receipt attached",
+      "view": "View receipt",
+      "remove": "Remove receipt",
+      "viewError": "Could not open the receipt.",
+      "removeError": "Could not remove the receipt."
+    },
+    "budgets": {
+      "title": "Budgets",
+      "new": "New budget",
+      "editDialogTitle": "Edit budget",
+      "newDialogTitle": "New budget",
+      "empty": "No budgets defined yet. Set a budget for a category to track your spending.",
+      "savedToast": "Budget saved.",
+      "deletedToast": "Budget deleted.",
+      "deleteConfirm": "Delete this budget?",
+      "spent": "spent",
+      "remaining": "remaining",
+      "exceeded": "exceeded",
+      "fields": {
+        "category": "Category",
+        "amount": "Monthly limit",
+        "period": "Period"
+      },
+      "periods": {
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "semiannual": "Semiannual",
+        "annual": "Annual"
+      },
+      "errors": {
+        "categoryRequired": "Pick a category.",
+        "amountInvalid": "Enter an amount greater than 0.",
+        "duplicateCategory": "This category already has a budget.",
+        "generic": "Could not save the budget."
+      },
+      "dashboard": {
+        "title": "Budgets",
+        "noBudgets": "No budgets configured."
+      }
+    },
+    "transfers": {
+      "title": "Transfer",
+      "new": "New transfer",
+      "dialogTitle": "New transfer",
+      "from": "From account",
+      "to": "To account",
+      "amount": "Amount",
+      "date": "Date",
+      "description": "Description",
+      "savedToast": "Transfer completed.",
+      "deletedToast": "Transfer deleted.",
+      "deleteConfirm": "Delete this transfer? The linked transactions will also be removed.",
+      "sameAccount": "Source and destination must be different.",
+      "errors": {
+        "generic": "Could not complete the transfer."
+      }
+    },
+    "csv": {
+      "export": "Export CSV",
+      "import": "Import CSV",
+      "importTitle": "Import transactions from CSV",
+      "selectFile": "Select file",
+      "preview": "Preview",
+      "validRows": "{{count}} valid rows",
+      "errorRows": "{{count}} with errors",
+      "confirmImport": "Import {{count}} transactions",
+      "importedToast": "{{count}} transactions imported.",
+      "noValidRows": "No valid rows to import.",
+      "formatHint": "Format: date,type,amount,category,description,payment_method"
+    }
+  }
+}

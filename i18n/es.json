@@ -1,0 +1,345 @@
+{
+  "app": {
+    "title": "EXES",
+    "tagline": "Gestión de finanzas personales",
+    "loading": "Cargando..."
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "all": "Todas"
+  },
+  "categories": {
+    "title": "Categorías",
+    "new": "Nueva categoría",
+    "editDialogTitle": "Editar categoría",
+    "newDialogTitle": "Nueva categoría",
+    "empty": "Aún no tienes categorías propias. Pulsa \"Nueva categoría\" para crear la primera.",
+    "predefinedTooltip": "Categoría predefinida (no editable)",
+    "deleteConfirm": "¿Eliminar la categoría \"{{name}}\"? Esta acción se puede deshacer si no la has utilizado.",
+    "deletedToast": "Categoría eliminada.",
+    "savedToast": "Categoría guardada.",
+    "fields": {
+      "name": "Nombre",
+      "type": "Tipo",
+      "color": "Color",
+      "icon": "Icono"
+    },
+    "filter": {
+      "label": "Filtrar por tipo"
+    },
+    "types": {
+      "income": "Ingreso",
+      "expense": "Gasto",
+      "both": "Ambos"
+    },
+    "errors": {
+      "nameRequired": "El nombre es obligatorio.",
+      "typeRequired": "El tipo es obligatorio.",
+      "duplicateName": "Ya tienes una categoría con ese nombre.",
+      "cannotDeleteInUse": "No se puede eliminar: esta categoría tiene transacciones asociadas.",
+      "generic": "No se pudo guardar la categoría."
+    },
+    "predefined": {
+      "food": "Alimentación",
+      "transport": "Transporte",
+      "leisure": "Ocio",
+      "health": "Salud",
+      "education": "Educación",
+      "housing": "Vivienda",
+      "services": "Servicios",
+      "clothing": "Ropa",
+      "savings": "Ahorros",
+      "income": "Ingresos",
+      "salary": "Salario",
+      "other_income": "Otros ingresos",
+      "transfer": "Transferencia"
+    }
+  },
+  "auth": {
+    "orEmail": "o con email",
+    "login": {
+      "title": "Iniciar sesión",
+      "submit": "Entrar",
+      "google": "Continuar con Google",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "noAccount": "Crear cuenta"
+    },
+    "register": {
+      "title": "Crear cuenta",
+      "submit": "Registrarme",
+      "haveAccount": "Ya tengo cuenta"
+    },
+    "recover": {
+      "title": "Recuperar contraseña",
+      "description": "Te enviaremos un enlace para restablecer tu contraseña.",
+      "submit": "Enviar enlace",
+      "success": "Si el email existe, recibirás un enlace en unos minutos.",
+      "backToLogin": "Volver a iniciar sesión"
+    },
+    "reset": {
+      "title": "Nueva contraseña",
+      "submit": "Cambiar contraseña",
+      "success": "Contraseña actualizada. Redirigiendo..."
+    },
+    "fields": {
+      "email": "Email",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "passwordPrompt": "Introduce una contraseña",
+      "passwordWeak": "Débil",
+      "passwordMedium": "Media",
+      "passwordStrong": "Fuerte"
+    },
+    "errors": {
+      "generic": "Ha ocurrido un error. Inténtalo de nuevo.",
+      "passwordsDontMatch": "Las contraseñas no coinciden."
+    }
+  },
+  "shell": {
+    "openMenu": "Abrir menú",
+    "placeholder": "Próximamente.",
+    "nav": {
+      "dashboard": "Panel",
+      "transactions": "Transacciones",
+      "budgets": "Presupuestos",
+      "categories": "Categorías",
+      "settings": "Configuración"
+    },
+    "userMenu": {
+      "label": "Menú de usuario",
+      "language": "Idioma",
+      "darkMode": "Modo oscuro",
+      "lightMode": "Modo claro",
+      "signOut": "Cerrar sesión"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "income": "Ingresos",
+    "expenses": "Gastos",
+    "balance": "Balance",
+    "expensesByCategory": "Gastos por categoría",
+    "recentTransactions": "Últimas transacciones",
+    "noExpenses": "Sin gastos este mes.",
+    "noTransactions": "Sin transacciones este mes.",
+    "amount": "Cantidad",
+    "prevMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "vsPrevMonth": "vs mes anterior",
+    "evolution": "Evolución (12 meses)",
+    "noEvolutionData": "Sin datos suficientes para el gráfico.",
+    "topCategories": "Top 5 categorías",
+    "noTopCategories": "Sin gastos por categoría este mes.",
+    "accumulatedBalance": "Saldo acumulado",
+    "totalBalance": "Total"
+  },
+  "settings": {
+    "title": "Configuración",
+    "currency": "Moneda",
+    "dateFormat": "Formato de fecha",
+    "language": "Idioma",
+    "theme": "Tema",
+    "themes": {
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "savedToast": "Configuración guardada.",
+    "save": "Guardar cambios",
+    "data": {
+      "title": "Tus datos",
+      "exportTitle": "Exportar datos",
+      "exportDescription": "Descarga un archivo JSON con todas tus transacciones, categorías, cuentas, presupuestos y transferencias.",
+      "exportButton": "Descargar backup",
+      "exportedToast": "Backup descargado.",
+      "deleteTitle": "Eliminar cuenta",
+      "deleteDescription": "Elimina permanentemente tu cuenta y todos los datos asociados. Esta acción no se puede deshacer.",
+      "deleteButton": "Eliminar mi cuenta",
+      "deleteConfirm": "¿Estás seguro? Escribe ELIMINAR para confirmar.",
+      "deleteInput": "Escribe ELIMINAR",
+      "deletedToast": "Cuenta eliminada. Adiós.",
+      "deleteError": "No se pudo eliminar la cuenta. Inténtalo más tarde.",
+      "restoreTitle": "Restaurar desde backup",
+      "restoreDescription": "Sube un archivo JSON exportado previamente y elige qué restaurar.",
+      "restoreButton": "Subir backup",
+      "restoreDialogTitle": "Restaurar backup",
+      "restoreSelectAll": "Seleccionar todo",
+      "restoreCategories": "Categorías personalizadas",
+      "restoreAccounts": "Cuentas",
+      "restoreTransactions": "Transacciones",
+      "restoreBudgets": "Presupuestos",
+      "restoreTransfers": "Transferencias",
+      "restoreDependency": "(requiere {{deps}})",
+      "restoreConfirm": "Restaurar seleccionados",
+      "restoreProgress": "Restaurando...",
+      "restoredToast": "Backup restaurado correctamente.",
+      "restoreError": "Error al restaurar el backup.",
+      "restoreNoData": "No se encontraron datos en el archivo.",
+      "restoreCounts": "{{count}} elementos"
+    },
+    "accounts": {
+      "title": "Cuentas",
+      "new": "Nueva cuenta",
+      "namePlaceholder": "Nombre de la cuenta",
+      "default": "Predeterminada",
+      "setDefault": "Establecer como predeterminada",
+      "deleteConfirm": "¿Eliminar la cuenta \"{{name}}\"? Las transacciones seguirán vinculadas.",
+      "deletedToast": "Cuenta eliminada.",
+      "savedToast": "Cuenta guardada.",
+      "cannotDeleteDefault": "No se puede eliminar la cuenta predeterminada.",
+      "cannotDeleteInUse": "No se puede eliminar: esta cuenta tiene transacciones asociadas.",
+      "errors": {
+        "nameRequired": "El nombre es obligatorio.",
+        "duplicateName": "Ya tienes una cuenta con ese nombre.",
+        "generic": "No se pudo guardar la cuenta."
+      }
+    }
+  },
+  "recurrences": {
+    "toggle": "Recurrente",
+    "frequency": "Frecuencia",
+    "endDate": "Hasta",
+    "frequencies": {
+      "monthly": "Mensual",
+      "quarterly": "Trimestral",
+      "semiannual": "Semestral",
+      "annual": "Anual"
+    },
+    "editDialog": {
+      "title": "Editar transacción recurrente",
+      "deleteTitle": "Eliminar transacción recurrente",
+      "onlyThis": "Solo esta ocurrencia",
+      "thisAndFuture": "Esta y futuras",
+      "all": "Todas las ocurrencias",
+      "continue": "Continuar"
+    },
+    "indicator": "Recurrente"
+  },
+  "transactions": {
+    "title": "Transacciones",
+    "new": "Nueva transacción",
+    "newDialogTitle": "Nueva transacción",
+    "editDialogTitle": "Editar transacción",
+    "empty": "No hay transacciones que coincidan con los filtros.",
+    "emptyTrash": "La papelera está vacía.",
+    "savedToast": "Transacción guardada.",
+    "deletedToast": "Transacción eliminada.",
+    "restoredToast": "Transacción restaurada.",
+    "deleteConfirm": "¿Eliminar esta transacción?",
+    "showDeleted": "Ver eliminadas",
+    "restore": "Restaurar",
+    "fields": {
+      "type": "Tipo",
+      "amount": "Cantidad",
+      "category": "Categoría",
+      "date": "Fecha",
+      "description": "Descripción",
+      "paymentMethod": "Método de pago",
+      "account": "Cuenta",
+      "descriptionPlaceholder": "Opcional"
+    },
+    "filters": {
+      "from": "Desde",
+      "to": "Hasta",
+      "type": "Tipo",
+      "categories": "Categorías",
+      "search": "Buscar por descripción"
+    },
+    "paymentMethods": {
+      "cash": "Efectivo",
+      "card": "Tarjeta",
+      "transfer": "Transferencia"
+    },
+    "table": {
+      "date": "Fecha",
+      "description": "Descripción",
+      "category": "Categoría",
+      "amount": "Cantidad",
+      "paymentMethod": "Método",
+      "actions": "Acciones"
+    },
+    "errors": {
+      "amountInvalid": "Introduce una cantidad mayor que 0.",
+      "categoryRequired": "Selecciona una categoría.",
+      "dateRequired": "La fecha es obligatoria.",
+      "generic": "No se pudo guardar la transacción."
+    },
+    "receipt": {
+      "label": "Justificante",
+      "attach": "Adjuntar justificante",
+      "attached": "Justificante adjunto",
+      "view": "Ver justificante",
+      "remove": "Eliminar justificante",
+      "viewError": "No se pudo abrir el justificante.",
+      "removeError": "No se pudo eliminar el justificante."
+    },
+    "budgets": {
+      "title": "Presupuestos",
+      "new": "Nuevo presupuesto",
+      "editDialogTitle": "Editar presupuesto",
+      "newDialogTitle": "Nuevo presupuesto",
+      "empty": "No hay presupuestos definidos. Asigna un presupuesto a una categoría para controlar tus gastos.",
+      "savedToast": "Presupuesto guardado.",
+      "deletedToast": "Presupuesto eliminado.",
+      "deleteConfirm": "¿Eliminar este presupuesto?",
+      "spent": "gastado",
+      "remaining": "disponible",
+      "exceeded": "excedido",
+      "fields": {
+        "category": "Categoría",
+        "amount": "Límite mensual",
+        "period": "Periodo"
+      },
+      "periods": {
+        "monthly": "Mensual",
+        "quarterly": "Trimestral",
+        "semiannual": "Semestral",
+        "annual": "Anual"
+      },
+      "errors": {
+        "categoryRequired": "Selecciona una categoría.",
+        "amountInvalid": "Introduce una cantidad mayor que 0.",
+        "duplicateCategory": "Esta categoría ya tiene un presupuesto.",
+        "generic": "No se pudo guardar el presupuesto."
+      },
+      "dashboard": {
+        "title": "Presupuestos",
+        "noBudgets": "Sin presupuestos configurados."
+      }
+    },
+    "transfers": {
+      "title": "Transferencia",
+      "new": "Nueva transferencia",
+      "dialogTitle": "Nueva transferencia",
+      "from": "Cuenta origen",
+      "to": "Cuenta destino",
+      "amount": "Cantidad",
+      "date": "Fecha",
+      "description": "Descripción",
+      "savedToast": "Transferencia realizada.",
+      "deletedToast": "Transferencia eliminada.",
+      "deleteConfirm": "¿Eliminar esta transferencia? Las transacciones vinculadas también se eliminarán.",
+      "sameAccount": "La cuenta origen y destino deben ser diferentes.",
+      "errors": {
+        "generic": "No se pudo completar la transferencia."
+      }
+    },
+    "csv": {
+      "export": "Exportar CSV",
+      "import": "Importar CSV",
+      "importTitle": "Importar transacciones desde CSV",
+      "selectFile": "Seleccionar archivo",
+      "preview": "Vista previa",
+      "validRows": "{{count}} filas válidas",
+      "errorRows": "{{count}} con errores",
+      "confirmImport": "Importar {{count}} transacciones",
+      "importedToast": "{{count}} transacciones importadas.",
+      "noValidRows": "No hay filas válidas para importar.",
+      "formatHint": "Formato: date,type,amount,category,description,payment_method"
+    }
+  }
+}
