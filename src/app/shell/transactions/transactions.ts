@@ -10,7 +10,7 @@ import { Title } from '@angular/platform-browser';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -22,6 +22,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SelectModule } from 'primeng/select';
+import { MenuModule } from 'primeng/menu';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -82,6 +83,7 @@ type ScopeChoice = 'one' | 'future' | 'all';
     MultiSelectModule,
     RadioButtonModule,
     SelectModule,
+    MenuModule,
     SelectButtonModule,
     TableModule,
     TagModule,
@@ -239,6 +241,31 @@ export class Transactions {
       value: a.id,
     })),
   );
+
+  /** Secondary actions shown in the ⋮ overflow menu on mobile. */
+  readonly secondaryMenuItems = computed<MenuItem[]>(() => {
+    this.lang.current();
+    const items: MenuItem[] = [
+      {
+        label: this.translate.instant('transactions.csv.export'),
+        icon: 'pi pi-download',
+        command: () => this.exportCsv(),
+      },
+      {
+        label: this.translate.instant('transactions.csv.import'),
+        icon: 'pi pi-upload',
+        command: () => this.openImportDialog(),
+      },
+    ];
+    if (this.accountOptions().length > 1) {
+      items.push({
+        label: this.translate.instant('transactions.transfers.new'),
+        icon: 'pi pi-arrows-h',
+        command: () => this.openTransferDialog(),
+      });
+    }
+    return items;
+  });
 
   // ─── Scope dialog (Google Calendar pattern) ──────────────────────────
   readonly scopeDialogOpen = signal(false);

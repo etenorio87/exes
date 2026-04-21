@@ -9,4 +9,6 @@ import { CardModule } from 'primeng/card';
   templateUrl: './auth-layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AuthLayout {}
+export class AuthLayout {
+  readonly currentYear = new Date().getFullYear();
+}

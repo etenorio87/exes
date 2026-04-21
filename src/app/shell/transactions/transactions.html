@@ -5,11 +5,22 @@
       {{ 'transactions.title' | translate }}
     </h1>
     <div class="flex items-center gap-2">
+      <!-- Acciones secundarias: menú overflow en móvil, botones individuales en desktop -->
+      <p-menu #actionsMenu [model]="secondaryMenuItems()" [popup]="true" appendTo="body" />
+      <p-button
+        icon="pi pi-ellipsis-v"
+        severity="secondary"
+        [text]="true"
+        class="sm:hidden"
+        (onClick)="actionsMenu.toggle($event)"
+        data-testid="secondary-actions-menu"
+      />
       <p-button
         [label]="'transactions.csv.export' | translate"
         icon="pi pi-download"
         severity="secondary"
         [text]="true"
+        class="hidden sm:inline-flex"
         (onClick)="exportCsv()"
         data-testid="export-csv"
       />
@@ -18,6 +29,7 @@
         icon="pi pi-upload"
         severity="secondary"
         [text]="true"
+        class="hidden sm:inline-flex"
         (onClick)="openImportDialog()"
         data-testid="import-csv"
       />
@@ -26,10 +38,12 @@
           [label]="'transactions.transfers.new' | translate"
           icon="pi pi-arrows-h"
           severity="secondary"
+          class="hidden sm:inline-flex"
           (onClick)="openTransferDialog()"
           data-testid="new-transfer"
         />
       }
+      <!-- Nueva transacción: siempre visible con texto -->
       <p-button
         [label]="'transactions.new' | translate"
         icon="pi pi-plus"

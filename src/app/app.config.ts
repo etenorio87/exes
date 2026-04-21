@@ -6,7 +6,32 @@ import { providePrimeNG } from 'primeng/config';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
+
+/**
+ * EXES brand palette — Azul Europeo + Dorado Euro
+ *
+ * Primary: EU Blue  #003399  (500 slot)
+ * Accent:  Euro Gold #FFD700  (used via CSS variable --exes-gold)
+ */
+const ExesTheme = definePreset(Aura, {
+  semantic: {
+    primary: {
+      50:  '#eef2ff',
+      100: '#d4e0ff',
+      200: '#aac0ff',
+      300: '#7799ff',
+      400: '#3d66ee',
+      500: '#003399',
+      600: '#002b80',
+      700: '#002266',
+      800: '#001a4d',
+      900: '#001133',
+      950: '#000a1f',
+    },
+  },
+});
 
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
@@ -22,7 +47,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: ExesTheme,
         options: {
           darkModeSelector: '.app-dark',
           cssLayer: {

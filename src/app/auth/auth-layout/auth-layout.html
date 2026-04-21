@@ -1,13 +1,43 @@
-<div class="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4">
-  <div class="w-full max-w-md">
-    <div class="text-center mb-6">
-      <h1 class="text-3xl font-bold text-primary-600">{{ 'app.title' | translate }}</h1>
-      <p class="text-surface-500 dark:text-surface-400 text-sm mt-1">
-        {{ 'app.tagline' | translate }}
+<div class="min-h-screen flex">
+  <!-- Left panel — brand (hidden on mobile) -->
+  <div
+    class="hidden lg:flex flex-col justify-between w-2/5 p-12"
+    style="background-color: #003399;"
+  >
+    <div class="flex items-center gap-3">
+      <span
+        class="flex items-center justify-center w-10 h-10 rounded-xl font-black text-xl"
+        style="background-color: #FFD700; color: #003399;"
+      >€</span>
+      <span class="text-2xl font-bold text-white tracking-wide">EXES</span>
+    </div>
+
+    <div>
+      <p class="text-4xl font-bold text-white leading-tight mb-4">
+        Tus finanzas,<br/>bajo control.
+      </p>
+      <p class="text-white/70 text-base leading-relaxed">
+        Registra ingresos y gastos, controla presupuestos y visualiza tu evolución financiera en tiempo real.
       </p>
     </div>
-    <p-card>
-      <router-outlet />
-    </p-card>
+
+    <p class="text-white/40 text-sm">© {{ currentYear }} EXES</p>
+  </div>
+
+  <!-- Right panel — form -->
+  <div class="flex flex-1 items-center justify-center bg-surface-50 dark:bg-surface-950 p-6">
+    <div class="w-full max-w-md">
+      <!-- Logo visible only on mobile -->
+      <div class="flex lg:hidden items-center justify-center gap-2 mb-6">
+        <span
+          class="flex items-center justify-center w-9 h-9 rounded-xl font-black text-lg"
+          style="background-color: #003399; color: #FFD700;"
+        >€</span>
+        <span class="text-2xl font-bold text-primary-600">EXES</span>
+      </div>
+      <p-card>
+        <router-outlet />
+      </p-card>
+    </div>
   </div>
 </div>
